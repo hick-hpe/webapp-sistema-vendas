@@ -1,0 +1,43 @@
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.swp
+*.swo
+
+# Environment
+env/
+venv/
+ENV/
+.venv/
+.env
+
+# Django
+*.log
+db.sqlite3
+media/
+staticfiles/
+*.pot
+*.pyc
+__pycache__/
+
+# PyCharm / VSCode / IDEs
+.idea/
+.vscode/
+
+# MacOS
+.DS_Store
+
+# Node / frontend (se tiver)
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Coverage / testing
+.coverage
+htmlcov/
+.tox/
+nosetests.xml
+coverage.xml
+*.cover

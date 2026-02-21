@@ -1,0 +1,77 @@
+{% load pwa %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        {% block title %}
+        {% endblock title %}
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    {% progressive_web_app_meta %}
+
+</head>
+
+<body class="d-flex">
+
+    <!-- Sidebar -->
+    <aside class="d-flex flex-column p-3 text-bg-dark vh-100" style="width: 250px;">
+        <span class="fs-4 mb-3">Sistema de Vendas</span>
+
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a href="{% url 'dashboard' %}" class="nav-link text-white">
+                    <i class="bi bi-house"></i> Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'categorias' %}" class="nav-link text-white">
+                    <i class="bi bi-tags"></i> Categorias
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'produtos' %}" class="nav-link text-white">
+                    <i class="bi bi-box"></i> Produtos
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'vendas' %}" class="nav-link text-white">
+                    <i class="bi bi-cart"></i> Vendas
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'compras_fiado' %}" class="nav-link text-white">
+                    <i class="bi bi-credit-card"></i> Fiado
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'logout' %}" class="nav-link text-white">
+                    <i class="bi bi-box-arrow-right"></i> Sair
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Conteúdo -->
+    <main class="flex-fill p-4">
+        {% block content %}
+        {% endblock content %}
+    </main>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+    <!-- <script src="sidebar.js"></script> -->
+
+    {% block scripts %}
+    {% endblock scripts %}
+
+</body>
+
+</html>

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Dashboard
+{% endblock title %}
+
+{% block content %}
+<div class="mb-4">
+    <h3>Bem-vindo, {{ request.user.first_name|default:request.user.username }}!</h3>
+</div>
+
+<h2 class="mb-4">Dashboard</h2>
+
+<!-- Cards -->
+<div class="row mb-4 g-3">
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted">Vendas Hoje</h6>
+                <h4>R$ 1.250</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted">Vendas no Mês</h6>
+                <h4>R$ 18.400</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted">Total de Vendas</h6>
+                <h4>42</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted">Estoque Baixo</h6>
+                <h4 class="text-danger">3 Produtos</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabela -->
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h5 class="mb-3">Últimas Vendas</h5>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Valor</th>
+                    <th>Data</th>
+                    <th>Pagamento</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Maria</td>
+                    <td>R$ 120</td>
+                    <td>20/02/2026</td>
+                    <td>Cartão</td>
+                </tr>
+                <tr>
+                    <td>João</td>
+                    <td>R$ 75</td>
+                    <td>20/02/2026</td>
+                    <td>Pix</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock content %}
