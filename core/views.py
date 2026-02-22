@@ -138,8 +138,19 @@ def produtos_view(request):
     else:
         form = ProdutoForm(request.user)
 
+    produtos = Produto.objects.filter(user=request.user)
+
+    buscar = request.GET.get('buscar')
+    categoria = request.GET.get('categoria')
+
+    if buscar:
+        produtos = produtos.filter(nome__icontains=buscar)
+
+    if categoria:
+        produtos = produtos.filter(categoria_id=categoria)
+        
     context = {
-        'produtos': Produto.objects.filter(user=request.user),
+        'produtos': produtos,
         'categorias': Categoria.objects.filter(user=request.user),
         'form': form,
     }

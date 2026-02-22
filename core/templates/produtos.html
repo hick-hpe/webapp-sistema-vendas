@@ -16,22 +16,47 @@ Produtos
 <!-- Filtro / Busca -->
 <div class="card shadow-sm mb-4">
     <div class="card-body">
-        <div class="row">
-            <div class="col-md-4">
-                <input type="text" class="form-control" placeholder="Buscar produto...">
+        <form method="GET">
+            <div class="row g-3 align-items-end">
+
+                <!-- Busca -->
+                <div class="col-md-5">
+                    <label class="form-label">Buscar</label>
+                    <input 
+                        name="buscar"
+                        type="text"
+                        class="form-control"
+                        placeholder="Buscar produto..."
+                        value="{{ request.GET.buscar }}">
+                </div>
+
+                <!-- Categoria -->
+                <div class="col-md-4">
+                    <label class="form-label">Categoria</label>
+                    <select name="categoria" class="form-select">
+                        <option value="">Todas</option>
+                        {% for categoria in categorias %}
+                            <option 
+                                value="{{ categoria.id }}"
+                                {% if request.GET.categoria == categoria.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ categoria.nome }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Botão -->
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-secondary w-100">
+                        Filtrar
+                    </button>
+                </div>
+
             </div>
-            <div class="col-md-3">
-                <select class="form-select">
-                    <option value="" selected>Categoria</option>
-                    {% for categoria in categorias %}
-                    <option value="{{ categoria.id }}">{{ categoria.nome }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-2">
-                <button class="btn btn-secondary w-100">Filtrar</button>
-            </div>
-        </div>
+        </form>
     </div>
 </div>
 
@@ -54,7 +79,7 @@ Produtos
                 {% for produto in produtos %}
                 <tr>
                     <td>{{ produto.id }}</td>
-                    <td>{{ produto.nome }}</td>
+                    <td class="nome-produto">{{ produto.nome }}</td>
                     <td>{{ produto.categoria.nome }}</td>
                     <td>R$ {{ produto.preco }}</td>
                     <td>{{ produto.estoque.quantidade }}</td>
@@ -68,8 +93,7 @@ Produtos
                             <i class="bi bi-pencil"></i>
                         </a>
                         <a href="#excluirProduto" class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                            data-bs-target="#excluirProduto" data-id="{{ produto.id }}"
-                            data-nome="{{ produto.nome }}">
+                            data-bs-target="#excluirProduto" data-id="{{ produto.id }}" data-nome="{{ produto.nome }}">
                             <i class="bi bi-trash"></i>
                         </a>
                     </td>
@@ -150,5 +174,3 @@ Produtos
 {% block scripts %}
 <script src="{% static 'js/excluirProduto.js' %}"></script>
 {% endblock scripts %}
-
-
