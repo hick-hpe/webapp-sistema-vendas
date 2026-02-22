@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
 Produtos
@@ -7,7 +8,7 @@ Produtos
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Produtos</h2>
-    <button class="btn btn-dark">
+    <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#criarProduto">
         <i class="bi bi-plus-lg"></i> Novo Produto
     </button>
 </div>
@@ -21,10 +22,10 @@ Produtos
             </div>
             <div class="col-md-3">
                 <select class="form-select">
-                    <option selected>Categoria</option>
-                    <option>Bebidas</option>
-                    <option>Alimentos</option>
-                    <option>Limpeza</option>
+                    <option value="" selected>Categoria</option>
+                    {% for categoria in categorias %}
+                    <option value="{{ categoria.id }}">{{ categoria.nome }}</option>
+                    {% endfor %}
                 </select>
             </div>
             <div class="col-md-2">
@@ -50,42 +51,104 @@ Produtos
                 </tr>
             </thead>
             <tbody>
+                {% for produto in produtos %}
                 <tr>
-                    <td>1</td>
-                    <td>Coca-Cola 2L</td>
-                    <td>Bebidas</td>
-                    <td>R$ 10,00</td>
-                    <td>12</td>
-                    <td><span class="badge bg-success">Normal</span></td>
+                    <td>{{ produto.id }}</td>
+                    <td>{{ produto.nome }}</td>
+                    <td>{{ produto.categoria.nome }}</td>
+                    <td>R$ {{ produto.preco }}</td>
+                    <td>{{ produto.estoque.quantidade }}</td>
+                    {% if produto.estoque.quantidade > 5 %}
+                    <td><span class="badge bg-success">{{ produto.estoque.status }}</span></td>
+                    {% else %}
+                    <td><span class="badge bg-danger">{{ produto.estoque.status }}</span></td>
+                    {% endif %}
                     <td class="text-end">
-                        <button class="btn btn-sm btn-warning">
+                        <a href="{% url 'produtos_editar' produto.id %}" class="btn btn-sm btn-warning">
                             <i class="bi bi-pencil"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger">
+                        </a>
+                        <a href="#excluirProduto" class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                            data-bs-target="#excluirProduto" data-id="{{ produto.id }}"
+                            data-nome="{{ produto.nome }}">
                             <i class="bi bi-trash"></i>
-                        </button>
+                        </a>
                     </td>
                 </tr>
-
-                <tr>
-                    <td>2</td>
-                    <td>Arroz 5kg</td>
-                    <td>Alimentos</td>
-                    <td>R$ 25,00</td>
-                    <td>2</td>
-                    <td><span class="badge bg-danger">Estoque Baixo</span></td>
-                    <td class="text-end">
-                        <button class="btn btn-sm btn-warning">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                </tr>
+                {% endfor %}
 
             </tbody>
         </table>
     </div>
 </div>
+
+<div class="modal fade" id="criarProduto" tabindex="-1" aria-labelledby="criarCategProduto" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="criarCategProduto">Criar Produto</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        {{ form.nome }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.categoria }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.preco }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.estoque }}
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="excluirProduto" tabindex="-1" aria-labelledby="excluirProdutoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="excluirProdutoLabel">Excluir Produto</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                Tem certeza que deseja excluir o produto <strong id="nomeProduto"></strong>?
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="formExcluirProduto" method="POST" action="">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 {% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'js/excluirProduto.js' %}"></script>
+{% endblock scripts %}
+
+

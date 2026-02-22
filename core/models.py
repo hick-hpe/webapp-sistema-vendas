@@ -10,6 +10,7 @@ class Categoria(models.Model):
 
 
 class Produto(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     nome = models.CharField(max_length=100)
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True, blank=True)
     preco = models.DecimalField(max_digits=10, decimal_places=2)
@@ -20,7 +21,7 @@ class Produto(models.Model):
 
 class Estoque(models.Model):
     produto = models.OneToOneField(Produto, on_delete=models.CASCADE)
-    quantidade = models.IntegerField()
+    quantidade = models.IntegerField(default=0)
 
     def __str__(self):
         return f'{self.quantidade} unidades - {self.produto.nome}'
@@ -28,8 +29,8 @@ class Estoque(models.Model):
     @property
     def status(self):
         if self.quantidade <= 5:
-            return "baixo"
-        return "normal"
+            return "Baixo"
+        return "Normal"
     
 
 class Venda(models.Model):

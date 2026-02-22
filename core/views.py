@@ -1,11 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import CategoriaForm
-from .models import Categoria
+from .forms import CategoriaForm, ProdutoForm
+from .models import Categoria, Estoque, Produto
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
+# #######################################################################
+#                           AUTENTICACAO
+# #######################################################################
 def login_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -28,11 +31,15 @@ def login_view(request):
 
     return render(request, 'login.html')
 
-
+# #######################################################################
+#                              OFFLINE
+# #######################################################################
 def offline_view(request):
     return render(request, "offline.html")
 
-
+# #######################################################################
+#                              DASHBOARD
+# #######################################################################
 @login_required(login_url='/')
 def dashboard_view(request):
     return render(request, "dashboard.html")
@@ -107,10 +114,83 @@ def categorias_excluir_view(request, id):
     return redirect('categorias')
 
 
+# #######################################################################
+#                               PRODUTOS
+# #######################################################################
+# produtos: GET/POST
 @login_required(login_url='/')
 def produtos_view(request):
-    return render(request, "produtos.html")
 
+    if request.method == 'POST':
+        form = ProdutoForm(request.user, request.POST)
+
+        if form.is_valid():
+            produto = form.save(commit=False)
+            produto.user = request.user
+            produto.save()
+
+            estoque_qtd = request.POST.get('estoque')
+            estoque_obj = Estoque.objects.create(
+                produto=produto,
+                quantidade=estoque_qtd
+            )
+            return redirect('produtos')
+    else:
+        form = ProdutoForm(request.user)
+
+    context = {
+        'produtos': Produto.objects.filter(user=request.user),
+        'categorias': Categoria.objects.filter(user=request.user),
+        'form': form,
+    }
+    return render(request, "produtos.html", context)
+
+
+# produtos: PUT
+@login_required(login_url='/')
+def produtos_editar_view(request, id):
+    produto = get_object_or_404(Produto, id=id, user=request.user)
+
+    if request.method == 'POST':
+        form = ProdutoForm(request.user, request.POST, instance=produto)
+        if form.is_valid():
+            produto = form.save(commit=False)
+            produto.user = request.user
+            produto.save()
+
+            Estoque.objects.update_or_create(
+                produto=produto,
+                defaults={'quantidade': form.cleaned_data['estoque']}
+            )
+            
+            return redirect('produtos')
+    else:
+        estoque_obj = getattr(produto, 'estoque', None)
+
+        form = ProdutoForm(
+            request.user,
+            instance=produto,
+            initial={
+                'estoque': estoque_obj.quantidade if estoque_obj else 0
+            }
+        )
+
+    context = {
+        'produtos': Produto.objects.filter(user=request.user),
+        'categorias': Categoria.objects.filter(user=request.user),
+        'form': form,
+        'produto': produto
+    }
+    return render(request, "produtos_editar.html", context)
+
+# produtos: DELETE
+@login_required(login_url='/')
+def produtos_excluir_view(request, id):
+    produto = get_object_or_404(Produto, id=id, user=request.user)
+    if request.method == 'POST':
+        produto.delete()
+        return redirect('produtos')
+    return redirect('produtos')
 
 @login_required(login_url='/')
 def vendas_view(request):
