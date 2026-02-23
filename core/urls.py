@@ -25,6 +25,8 @@ urlpatterns = [
 
     # vendas-fiado
     path('vendas-fiado/', views.vendas_fiado_view, name='vendas_fiado'),
+    path('vendas-fiado/<int:id>/pagar/', views.vendas_fiado_pagar_view, name='vendas_fiado_pagar'),
+    path('vendas-fiado/<int:id>/excluir/', views.vendas_fiado_excluir_view, name='vendas_fiado_excluir'),
 
     # offline
     path('offline/', views.offline_view, name='offline'),

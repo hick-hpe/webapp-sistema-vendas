@@ -55,12 +55,18 @@ class ItemVenda(models.Model):
     
 
 class VendaFiada(models.Model):
+    STATUS_CHOICES = [
+        ("pendente", "Pendente"),
+        ("parcial", "Parcial"),
+        ("pago", "Pago"),
+    ]
     venda = models.OneToOneField(Venda, on_delete=models.CASCADE)
-    valor_pago = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    quitado = models.BooleanField(default=False)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pendente")
+    total_pago = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    @property
+    def total_pendente(self):
+        return self.venda.total - self.total_pago
 
     def __str__(self):
-        if self.quitado:
-            return f'Venda #{self.venda.id} - Quitada'
-        return f'Venda #{self.venda.id} - Pendente'
-
+        return f'Venda Fiada #{self.venda.id} - Status: {self.status}'

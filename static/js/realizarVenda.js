@@ -8,6 +8,11 @@ const finalizarVendaBtn = document.querySelector("#finalizarVenda");
 finalizarVendaBtn.addEventListener("click", finalizarVenda);
 
 let totalGeral = 0;
+let fiado = false;
+
+function toggleFiado() {
+    fiado = fiadoCheck.checked;
+}
 
 function adicionarItem() {
     const select = document.getElementById("produtoSelect");
@@ -83,11 +88,6 @@ function recalcular() {
     });
 
     atualizarTotal();
-}
-
-function toggleFiado() {
-    const div = document.getElementById("clienteFiadoDiv");
-    div.classList.toggle("d-none");
 }
 
 function finalizarVenda() {

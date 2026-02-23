@@ -1,16 +1,25 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
 Compras Fiado
 {% endblock title %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div>
     <h2>Compras no Fiado</h2>
-    <button class="btn btn-dark">
-        <i class="bi bi-plus-lg"></i> Nova Compra Fiado
-    </button>
 </div>
+
+{% if messages %}
+<div class="mb-3">
+    {% for message in messages %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 
 <!-- Filtro / Busca -->
 <div class="card shadow-sm mb-4">
@@ -46,79 +55,147 @@ Compras Fiado
                     <th>ID</th>
                     <th>Cliente</th>
                     <th>Data</th>
-                    <th>Total</th>
-                    <th>Pago</th>
                     <th>Pendente</th>
                     <th>Status</th>
                     <th class="text-end">Ações</th>
                 </tr>
             </thead>
             <tbody>
+                {% for venda_fiado in vendas_fiado %}
                 <tr>
-                    <td>1</td>
-                    <td>João Silva</td>
-                    <td>20/02/2026</td>
-                    <td>R$ 150,00</td>
-                    <td>R$ 50,00</td>
-                    <td>R$ 100,00</td>
-                    <td><span class="badge bg-danger">Pendente</span></td>
+                    <td>{{ venda_fiado.venda.id }}</td>
+                    <td>{{ venda_fiado.venda.cliente|default:"-" }}</td>
+                    <td>{{ venda_fiado.venda.data_venda|date:"d/m/Y - H:i" }}</td>
+                    <td>R$ {{ venda_fiado.total_pendente|floatformat:2 }}</td>
+                    <td>
+                        {% if venda_fiado.status == 'pendente' %}
+                        <span class="badge bg-danger">Pendente</span>
+
+                        {% elif venda_fiado.status == 'parcial' %}
+                        <span class="badge bg-warning text-dark">Parcial</span>
+
+                        {% elif venda_fiado.status == 'pago' %}
+                        <span class="badge bg-success">Quitado</span>
+
+                        {% else %}
+                        <span class="badge bg-secondary">Desconhecido</span>
+                        {% endif %}
+                    </td>
                     <td class="text-end">
-                        <button class="btn btn-sm btn-success">
+                        <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#pagarVendaFiado"
+                            data-id="{{ venda_fiado.id }}">
                             <i class="bi bi-cash"></i>
                         </button>
-                        <button class="btn btn-sm btn-info">
+
+                        <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detalhesVendaFiado"
+                            data-venda-id="{{ venda_fiado.venda.id }}"
+                            data-venda-cliente="{{ venda_fiado.venda.cliente }}"
+                            data-venda-descricao="{{ venda_fiado.venda.descricao|default:'Sem descrição' }}"
+                            data-venda-data="{{ venda_fiado.venda.data_venda|date:'d/m/Y - H:i' }}"
+                            data-venda-total="{{ venda_fiado.venda.total|floatformat:2 }}"
+                            data-venda-total-pago="{{ venda_fiado.total_pago|floatformat:2 }}"
+                            data-venda-total-pendente="{{ venda_fiado.total_pendente|floatformat:2 }}"
+                            data-venda-status="{{ venda_fiado.status }}"
+                            data-venda-produtos="{% for item in venda_fiado.venda.itens.all %}{{ item.produto.nome }} - {{ item.quantidade }}x{% if not forloop.last %}, {% endif %}{% endfor %}">
                             <i class="bi bi-eye"></i>
                         </button>
-                        <button class="btn btn-sm btn-danger">
+
+                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#excluirVendaFiado"
+                            data-id="{{ venda_fiado.id }}"
+                            data-nome="#{{ venda_fiado.venda.id }} - {{ venda_fiado.venda.descricao|default:'Sem descrição' }}">
                             <i class="bi bi-trash"></i>
                         </button>
                     </td>
                 </tr>
-
+                {% empty %}
                 <tr>
-                    <td>2</td>
-                    <td>Maria Souza</td>
-                    <td>18/02/2026</td>
-                    <td>R$ 80,00</td>
-                    <td>R$ 80,00</td>
-                    <td>R$ 0,00</td>
-                    <td><span class="badge bg-success">Quitado</span></td>
-                    <td class="text-end">
-                        <button class="btn btn-sm btn-success">
-                            <i class="bi bi-cash"></i>
-                        </button>
-                        <button class="btn btn-sm btn-info">
-                            <i class="bi bi-eye"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
+                    <td colspan="4" class="text-center">Nenhuma venda fiada encontrada.</td>
                 </tr>
-
-                <tr>
-                    <td>3</td>
-                    <td>Carlos Lima</td>
-                    <td>15/02/2026</td>
-                    <td>R$ 200,00</td>
-                    <td>R$ 120,00</td>
-                    <td>R$ 80,00</td>
-                    <td><span class="badge bg-warning text-dark">Parcial</span></td>
-                    <td class="text-end">
-                        <button class="btn btn-sm btn-success">
-                            <i class="bi bi-cash"></i>
-                        </button>
-                        <button class="btn btn-sm btn-info">
-                            <i class="bi bi-eye"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-
+                {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
+
+<!-- Modal Pagar -->
+<div class="modal fade" id="pagarVendaFiado" tabindex="-1" aria-labelledby="pagarVendaFiadoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pagarVendaFiadoLabel">Registrar Pagamento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="pagarVendaFiadoForm" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="venda_fiado_id" id="pagarVendaFiadoId">
+                    <div class="mb-3">
+                        <label for="valor_pago" class="form-label">Valor Pago</label>
+                        <input type="number" step="0.01" min="0" class="form-control" id="valor_pago" name="valor_pago"
+                            placeholder="Ex: 100.00" required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Registrar Pagamento</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Detalhes da Venda -->
+<div class="modal fade" id="detalhesVendaFiado" tabindex="-1" aria-labelledby="detalhesVendaFiadoLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detalhesVendaFiadoLabel">Detalhes da Venda Fiada</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>ID:</strong> <span id="vendaFiadoId"></span></p>
+                <p><strong>Cliente:</strong> <span id="vendaFiadoCliente"></span></p>
+                <p><strong>Descrição:</strong> <span id="vendaFiadoDescricao"></span></p>
+                <p><strong>Data:</strong> <span id="vendaFiadoData"></span></p>
+                <p><strong>Total:</strong> R$ <span id="vendaFiadoTotal"></span></p>
+                <p><strong>Total Pago:</strong> R$ <span id="vendaFiadoTotalPago"></span></p>
+                <p><strong>Total Pendente:</strong> R$ <span id="vendaFiadoTotalPendente"></span></p>
+                <p><strong>Status:</strong> <span id="vendaFiadoStatus"></span></p>
+                <p><strong>Produtos:</strong> <span id="vendaFiadoProdutos"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Excluir Venda Fiado -->
+<div class="modal fade" id="excluirVendaFiado" tabindex="-1" aria-labelledby="excluirVendaFiadoLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="excluirVendaFiadoLabel">Excluir Venda Fiada</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir a venda fiada <strong id="vendaFiadoNome"></strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form method="post" id="excluirVendaFiadoForm">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'js/pagarVendaFiada.js' %}"></script>
+<script src="{% static 'js/detalhesVendaFiado.js' %}"></script>
+<script src="{% static 'js/excluirVendaFiado.js' %}"></script>
+{% endblock scripts %}

@@ -1,8 +1,9 @@
+from decimal import Decimal, InvalidOperation
 from django.utils import timezone
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import CategoriaForm, ProdutoForm
-from .models import Categoria, Estoque, Produto, Venda, ItemVenda
+from .models import Categoria, Estoque, Produto, Venda, ItemVenda, VendaFiada
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
@@ -340,6 +341,17 @@ def realizar_venda_view(request):
 
                 produto.estoque.quantidade -= quantidade
                 produto.estoque.save()
+            
+            # venda fiada
+            if fiado:
+                print("Criando venda fiada...")
+                print(f"Venda: {venda_obj.id}, Cliente: {cliente}, Total: {total_calculado}")
+                VendaFiada.objects.create(
+                    venda=venda_obj,
+                    total_pago=0,
+                    total_pendente=total_calculado,
+                    status="pendente"
+                )
 
             return JsonResponse({"status": "success"})
 
@@ -379,10 +391,66 @@ def vendas_excluir_view(request, id):
 # #######################################################################
 #                           VENDAS FIADO
 # #######################################################################
+# vendas_fiado: GET
 @login_required(login_url='/')
 def vendas_fiado_view(request):
-    return render(request, "vendas-fiado.html")
+    vendas_fiado = VendaFiada.objects.filter(
+        venda__user=request.user
+    ).select_related('venda').order_by('-venda__data_venda')
+    
+    context = {
+        "vendas_fiado": vendas_fiado
+    }
+    return render(request, "vendas-fiado.html", context)
 
+
+# vendas_fiado: PAY
+@login_required(login_url='/')
+def vendas_fiado_pagar_view(request, id):
+
+    venda_fiado = get_object_or_404(
+        VendaFiada,
+        id=id,
+        venda__user=request.user
+    )
+
+    if request.method == 'POST':
+
+        try:
+            valor_pago = Decimal(request.POST.get('valor_pago', '0'))
+        except InvalidOperation:
+            messages.error(request, "Valor inválido.")
+            return redirect('vendas_fiado')
+
+        if valor_pago <= 0:
+            messages.error(request, "Valor de pagamento inválido.")
+            return redirect('vendas_fiado')
+
+        venda_fiado.total_pago += valor_pago
+
+        if venda_fiado.total_pago >= venda_fiado.venda.total:
+            venda_fiado.status = "pago"
+            venda_fiado.total_pago = venda_fiado.venda.total
+        else:
+            venda_fiado.status = "parcial"
+
+        venda_fiado.save()
+
+        return redirect('vendas_fiado')
+
+    return redirect('vendas_fiado')
+
+
+# vendas_fiado: DELETE
+@login_required(login_url='/')
+def vendas_fiado_excluir_view(request, id):
+    venda_fiado = get_object_or_404(VendaFiada, id=id, venda__user=request.user)
+
+    if request.method == 'POST':
+        venda_fiado.venda.delete()
+        return redirect('vendas_fiado')
+    
+    return redirect('vendas_fiado')
 
 # #######################################################################
 #                               LOGOUT

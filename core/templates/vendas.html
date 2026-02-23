@@ -80,6 +80,7 @@ Vendas
                     <td class="text-end">
                         <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detalhesVenda"
                             data-venda-id="{{ venda.id }}"
+                            data-venda-cliente="{{ venda.cliente }}"
                             data-venda-descricao="{{ venda.descricao|default:'Sem descrição' }}"
                             data-venda-data="{{ venda.data_venda|date:'d/m/Y - H:i' }}"
                             data-venda-total="{{ venda.total }}" data-venda-produtos="{% for item in venda.itens.all %}{{ item.produto.nome }} - {{ item.quantidade }}x{% if not forloop.last %}, {% endif %}{% endfor %}">
@@ -111,6 +112,7 @@ Vendas
             </div>
             <div class="modal-body">
                 <p><strong>ID:</strong> <span id="modalVendaId"></span></p>
+                <p><strong>Cliente:</strong> <span id="modalVendaCliente"></span></p>
                 <p><strong>Descrição:</strong> <span id="modalVendaDescricao"></span></p>
                 <p><strong>Data:</strong> <span id="modalVendaData"></span></p>
                 <p><strong>Total:</strong> R$ <span id="modalVendaTotal"></span></p>
