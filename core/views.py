@@ -397,6 +397,35 @@ def vendas_fiado_view(request):
     vendas_fiado = VendaFiada.objects.filter(
         venda__user=request.user
     ).select_related('venda').order_by('-venda__data_venda')
+
+    buscar = request.GET.get('buscar')
+    data = request.GET.get('data')
+
+    if buscar:
+        filtros = (
+            Q(venda__descricao__icontains=buscar) |
+            Q(venda__cliente__icontains=buscar)
+        )
+
+        if buscar.isdigit():
+            filtros |= Q(id=int(buscar))
+
+        vendas_fiado = vendas_fiado.filter(filtros)
+
+    if data:
+        try:
+            data_base = datetime.strptime(data, "%Y-%m-%d")
+
+            inicio = data_base
+            fim = data_base + timedelta(days=1)
+
+            vendas_fiado = vendas_fiado.filter(
+                venda__data_venda__gte=inicio,
+                venda__data_venda__lt=fim
+            )
+
+        except ValueError:
+            pass
     
     context = {
         "vendas_fiado": vendas_fiado

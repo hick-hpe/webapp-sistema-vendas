@@ -60,9 +60,16 @@ class VendaFiada(models.Model):
         ("parcial", "Parcial"),
         ("pago", "Pago"),
     ]
+    PAGAMENTO_CHOICES = [
+        ("dinheiro", "Dinheiro"),
+        ("cartao", "Cartão"),
+        ("pix", "Pix"),
+        ("outro", "Outro"),
+    ]
     venda = models.OneToOneField(Venda, on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pendente")
     total_pago = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    forma_pagamento = models.CharField(max_length=100, choices=PAGAMENTO_CHOICES, blank=True, null=True, default='pix')
 
     @property
     def total_pendente(self):

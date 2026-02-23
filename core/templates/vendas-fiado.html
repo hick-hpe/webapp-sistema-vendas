@@ -24,27 +24,47 @@ Compras Fiado
 <!-- Filtro / Busca -->
 <div class="card shadow-sm mb-4">
     <div class="card-body">
-        <div class="row">
-            <div class="col-md-4">
-                <input type="text" class="form-control" placeholder="Buscar por cliente...">
+
+        <form method="GET">
+            <div class="row g-3">
+
+                <div class="col-md-4">
+                    <input 
+                        type="text"
+                        name="buscar"
+                        value="{{ request.GET.buscar }}"
+                        class="form-control"
+                        placeholder="Buscar por cliente, descrição ou ID..."
+                    >
+                </div>
+
+                <div class="col-md-3">
+                    <input 
+                        type="date"
+                        name="data"
+                        value="{{ request.GET.data }}"
+                        class="form-control"
+                    >
+                </div>
+
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-secondary w-100">
+                        Filtrar
+                    </button>
+                </div>
+
+                <div class="col-md-2">
+                    <a href="{% url 'vendas_fiado' %}" class="btn btn-outline-dark w-100">
+                        Limpar
+                    </a>
+                </div>
+
             </div>
-            <div class="col-md-3">
-                <input type="date" class="form-control">
-            </div>
-            <div class="col-md-3">
-                <select class="form-select">
-                    <option selected>Status</option>
-                    <option>Pendente</option>
-                    <option>Parcialmente Pago</option>
-                    <option>Quitado</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <button class="btn btn-secondary w-100">Filtrar</button>
-            </div>
-        </div>
+        </form>
+
     </div>
 </div>
+
 
 <!-- Tabela -->
 <div class="card shadow-sm">

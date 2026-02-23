@@ -45,7 +45,7 @@ Realizar Venda
     </div>
 
     <!-- Lista de Itens -->
-    <div class="col-md-7">
+    <div class="col-md-7" style="max-height: 70vh; overflow-y: auto">
         <div class="card shadow-sm">
             <div class="card-body">
 
@@ -77,6 +77,16 @@ Realizar Venda
 
                 <div class="mb-3" id="clienteFiadoDiv">
                     <input type="text" id="clienteFiado" class="form-control" placeholder="Nome do cliente">
+                </div>
+
+                <div class="mb-3">
+                    <label for="forma-pagamento" class="form-label">Forma de Pagamento</label>
+                    <select id="forma-pagamento" class="form-select">
+                        <option value="pix">Pix</option>
+                        <option value="dinheiro">Dinheiro</option>
+                        <option value="cartao">Cartão</option>
+                        <option value="outro">Outro</option>
+                    </select>
                 </div>
 
                 <div class="mb-3">
