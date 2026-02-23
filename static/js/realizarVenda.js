@@ -27,10 +27,8 @@ function adicionarItem() {
     if (linhaExistente) {
 
         const qtdCell = linhaExistente.children[1];
-        const precoCell = linhaExistente.children[2];
 
         let qtdAtual = parseInt(qtdCell.innerText);
-        let precoAtual = parseFloat(precoCell.innerText);
 
         const novaQtd = qtdAtual + quantidade;
 
