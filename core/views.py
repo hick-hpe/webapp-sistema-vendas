@@ -1,10 +1,15 @@
+from django.utils import timezone
+from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import CategoriaForm, ProdutoForm
-from .models import Categoria, Estoque, Produto
+from .models import Categoria, Estoque, Produto, Venda, ItemVenda
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+import json
+from django.http import JsonResponse
+
 
 # #######################################################################
 #                           AUTENTICACAO
@@ -203,16 +208,139 @@ def produtos_excluir_view(request, id):
         return redirect('produtos')
     return redirect('produtos')
 
+
+# #######################################################################
+#                               VENDAS
+# #######################################################################
 @login_required(login_url='/')
 def vendas_view(request):
-    return render(request, "vendas.html")
+
+    vendas = (
+        Venda.objects
+        .filter(user=request.user)
+        .prefetch_related('itens__produto')
+        .order_by('-data_venda')
+    )
+
+    context = {
+        'vendas': vendas
+    }
+
+    print("Vendas do usuário:", request.user.username)
+    for venda in vendas:
+        print(f'Venda #{venda.id} - Total: R$ {venda.total} - Itens: {[f"{item.produto.nome} x{item.quantidade}" for item in venda.itens.all()]}')
+
+    return render(request, "vendas.html", context)
 
 
+@transaction.atomic
 @login_required(login_url='/')
-def compras_fiado_view(request):
-    return render(request, "compras-fiado.html")
+def realizar_venda_view(request):
+
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+
+            itens = data.get("itens", [])
+            fiado = data.get("fiado", False)
+            cliente = data.get("clienteFiado")
+            descricao = data.get("descricao")
+
+            if not itens:
+                print("Nenhum item enviado.")
+                return JsonResponse(
+                    {"status": "error", "message": "Nenhum item enviado."},
+                    status=400
+                )
+            
+            if len(descricao) > 255:
+                return JsonResponse({
+                    "status": "error",
+                    "message": "Descrição muito longa."
+                }, status=400)
+
+            total_calculado = 0
+
+            # primeiro valida tudo
+            produtos_processados = []
+
+            for item in itens:
+                produto = get_object_or_404(
+                    Produto,
+                    id=item['id'],
+                    user=request.user
+                )
+
+                quantidade = int(item['quantidade'])
+                preco = float(item['preco'])
+
+                if quantidade <= 0:
+                    return JsonResponse({
+                        "status": "error",
+                        "message": f"Quantidade inválida para {produto.nome}."
+                    }, status=400)
+
+                if produto.estoque.quantidade < quantidade:
+                    return JsonResponse({
+                        "status": "error",
+                        "message": f"Estoque insuficiente para {produto.nome}. Estoque atual: {produto.estoque.quantidade}"
+                    }, status=400)
+
+                total_calculado += quantidade * preco
+
+                produtos_processados.append(
+                    (produto, quantidade, preco)
+                )
+
+            # cria a venda
+            venda_obj = Venda.objects.create(
+                cliente=cliente if fiado else None,
+                total=total_calculado,
+                descricao=descricao,
+                user=request.user,
+                data_venda=timezone.now()
+            )
+
+            # cria itens + baixa estoque
+            for produto, quantidade, preco in produtos_processados:
+
+                ItemVenda.objects.create(
+                    venda=venda_obj,
+                    produto=produto,
+                    quantidade=quantidade,
+                    total_parcial=preco
+                )
+
+                produto.estoque.quantidade -= quantidade
+                produto.estoque.save()
+
+            return JsonResponse({"status": "success"})
+
+        except Exception as e:
+            print("Erro ao processar venda:", str(e))
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
+
+    context = {
+        'produtos': Produto.objects.filter(user=request.user)
+    }
+
+    return render(request, "realizar-venda.html", context)
 
 
+# #######################################################################
+#                           VENDAS FIADO
+# #######################################################################
+@login_required(login_url='/')
+def vendas_fiado_view(request):
+    return render(request, "vendas-fiado.html")
+
+
+# #######################################################################
+#                               LOGOUT
+# #######################################################################
 @login_required(login_url='/')
 def logout_view(request):
     print('Fazendo logout...')

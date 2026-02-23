@@ -34,3 +34,10 @@ class ProdutoForm(forms.ModelForm):
         self.fields['categoria'].queryset = Categoria.objects.filter(user=user)
         self.fields['categoria'].empty_label = "Escolha uma categoria"
 
+
+# class VendaForm(forms.Form):
+#     cliente = forms.CharField(
+#         label="Nome do cliente (opcional)",
+#         required=False,
+#         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome do cliente'})
+#     )

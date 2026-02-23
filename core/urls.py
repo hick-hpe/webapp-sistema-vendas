@@ -20,9 +20,10 @@ urlpatterns = [
 
     # vendas
     path('vendas/', views.vendas_view, name='vendas'),
+    path('vendas/realizar/', views.realizar_venda_view, name='realizar_venda'),
 
-    # compras-fiado
-    path('compras-fiado/', views.compras_fiado_view, name='compras_fiado'),
+    # vendas-fiado
+    path('vendas-fiado/', views.vendas_fiado_view, name='vendas_fiado'),
 
     # offline
     path('offline/', views.offline_view, name='offline'),

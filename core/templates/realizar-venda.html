@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Realizar Venda
+{% endblock title %}
+
+{% block content %}
+
+<h2 class="mb-4">Realizar Venda</h2>
+
+<div class="row">
+
+    <!-- Busca de Produto -->
+    <div class="col-md-5">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+
+                <h5 class="mb-3">Adicionar Produto</h5>
+
+                <div class="mb-3">
+                    <select id="produtoSelect" class="form-select">
+                        <option value="">Selecione um produto</option>
+                        {% for produto in produtos %}
+                        <option value="{{ produto.id }}" data-nome="{{ produto.nome }}"
+                            data-preco="{{ produto.preco }}">
+                            {{ produto.nome }} - R$ {{ produto.preco }} - Estoque: {{ produto.estoque.quantidade }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="quantidade">Quantidade</label>
+                    <input type="number" id="quantidade" class="form-control" placeholder="Quantidade" min="1"
+                        value="1">
+                </div>
+
+                <button id="btnAdicionar" class="btn btn-dark w-100">
+                    Adicionar Item
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Itens -->
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="card-body">
+
+                <h5 class="mb-3">Itens da Venda</h5>
+
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Qtd</th>
+                            <th>Valor Unit.</th>
+                            <th>Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaItens">
+                    </tbody>
+                </table>
+
+                <hr>
+
+                <!-- Venda Fiado -->
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="fiadoCheck">
+                    <label class="form-check-label">
+                        Venda Fiado
+                    </label>
+                </div>
+
+                <div class="mb-3 d-none" id="clienteFiadoDiv">
+                    <input type="text" id="clienteFiado" class="form-control" placeholder="Nome do cliente">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Descrição da venda</label>
+                    <textarea id="descricaoVenda" class="form-control" rows="5" style="resize: none;"
+                        placeholder="Observações da venda (opcional, max: 255)" maxlength="255"></textarea>
+                </div>
+
+                <h4 class="text-end">
+                    Total: R$ <span id="valorTotal">0.00</span>
+                </h4>
+
+                <button id="finalizarVenda" data-url="{% url 'realizar_venda' %}" class="btn btn-success w-100 mt-3">
+                    Finalizar Venda
+                </button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="vendaSucessoModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Venda Finalizada</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                Venda realizada com sucesso!
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">
+                    OK
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="mt-5">
+    <a href="{% url 'vendas' %}" class="btn btn-secondary">Voltar</a>
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'js/realizarVenda.js' %}"></script>
+{% endblock scripts %}

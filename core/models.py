@@ -34,9 +34,11 @@ class Estoque(models.Model):
     
 
 class Venda(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     cliente = models.CharField(max_length=100, blank=True, null=True)
-    data_venda = models.DateField(auto_now_add=True)
+    data_venda = models.DateTimeField(auto_now_add=True)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    descricao = models.TextField(max_length=500, blank=True, null=True)
 
     def __str__(self):
         return f'Venda #{self.id} - R$ {self.total}'

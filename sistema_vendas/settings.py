@@ -114,7 +114,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# Usa fusos horários (Recomendado)
+USE_TZ = True
+
+# Define o fuso horário de São Paulo
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
