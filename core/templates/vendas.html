@@ -16,17 +16,44 @@ Vendas
 <!-- Filtro / Busca -->
 <div class="card shadow-sm mb-4">
     <div class="card-body">
-        <div class="row">
-            <div class="col-md-4">
-                <input type="text" class="form-control" placeholder="Buscar por cliente ou ID...">
+
+        <form method="GET">
+            <div class="row g-3">
+
+                <div class="col-md-4">
+                    <input 
+                        type="text"
+                        name="buscar"
+                        value="{{ request.GET.buscar }}"
+                        class="form-control"
+                        placeholder="Buscar por cliente, descrição ou ID..."
+                    >
+                </div>
+
+                <div class="col-md-3">
+                    <input 
+                        type="date"
+                        name="data"
+                        value="{{ request.GET.data }}"
+                        class="form-control"
+                    >
+                </div>
+
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-secondary w-100">
+                        Filtrar
+                    </button>
+                </div>
+
+                <div class="col-md-2">
+                    <a href="{% url 'vendas' %}" class="btn btn-outline-dark w-100">
+                        Limpar
+                    </a>
+                </div>
+
             </div>
-            <div class="col-md-3">
-                <input type="date" class="form-control">
-            </div>
-            <div class="col-md-2">
-                <button class="btn btn-secondary w-100">Filtrar</button>
-            </div>
-        </div>
+        </form>
+
     </div>
 </div>
 
@@ -58,7 +85,9 @@ Vendas
                             data-venda-total="{{ venda.total }}" data-venda-produtos="{% for item in venda.itens.all %}{{ item.produto.nome }} - {{ item.quantidade }}x{% if not forloop.last %}, {% endif %}{% endfor %}">
                             <i class="bi bi-eye"></i>
                         </button>
-                        <button class="btn btn-sm btn-danger">
+                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#excluirVenda"
+                            data-id="{{ venda.id }}"
+                            data-nome="#{{ venda.id }} - {{ venda.descricao|default:'Sem descrição' }}">
                             <i class="bi bi-trash"></i>
                         </button>
                     </td>
@@ -93,8 +122,34 @@ Vendas
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="excluirVenda" tabindex="-1" aria-labelledby="excluirVenda" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="excluirVenda">Excluir Venda</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                Tem certeza que deseja excluir a venda <strong id="nomeVenda"></strong>?
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="formExcluirVenda" method="POST" action="">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 {% endblock content %}
 
 {% block scripts %}
 <script src="{% static 'js/detalhesVenda.js' %}"></script>
+<script src="{% static 'js/excluirVenda.js' %}"></script>
 {% endblock scripts %}

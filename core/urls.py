@@ -21,6 +21,7 @@ urlpatterns = [
     # vendas
     path('vendas/', views.vendas_view, name='vendas'),
     path('vendas/realizar/', views.realizar_venda_view, name='realizar_venda'),
+    path('vendas/<int:id>/excluir/', views.vendas_excluir_view, name='vendas_excluir'),
 
     # vendas-fiado
     path('vendas-fiado/', views.vendas_fiado_view, name='vendas_fiado'),

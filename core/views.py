@@ -9,6 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import json
 from django.http import JsonResponse
+from django.db.models import Q
+from datetime import datetime, timedelta, timedelta
 
 
 # #######################################################################
@@ -222,13 +224,38 @@ def vendas_view(request):
         .order_by('-data_venda')
     )
 
+    buscar = request.GET.get('buscar')
+    data = request.GET.get('data')
+
+    if buscar:
+        filtros = (
+            Q(descricao__icontains=buscar) |
+            Q(cliente__icontains=buscar)
+        )
+
+        if buscar.isdigit():
+            filtros |= Q(id=int(buscar))
+
+        vendas = vendas.filter(filtros)
+
+    if data:
+        try:
+            data_base = datetime.strptime(data, "%Y-%m-%d")
+
+            inicio = data_base
+            fim = data_base + timedelta(days=1)
+
+            vendas = vendas.filter(
+                data_venda__gte=inicio,
+                data_venda__lt=fim
+            )
+
+        except ValueError:
+            pass
+
     context = {
         'vendas': vendas
     }
-
-    print("Vendas do usuário:", request.user.username)
-    for venda in vendas:
-        print(f'Venda #{venda.id} - Total: R$ {venda.total} - Itens: {[f"{item.produto.nome} x{item.quantidade}" for item in venda.itens.all()]}')
 
     return render(request, "vendas.html", context)
 
@@ -328,6 +355,25 @@ def realizar_venda_view(request):
     }
 
     return render(request, "realizar-venda.html", context)
+
+
+# vendas: DELETE
+@login_required(login_url='/')
+def vendas_excluir_view(request, id):
+    venda = get_object_or_404(Venda, id=id, user=request.user)
+
+    if request.method == 'POST':
+        # restaura estoque
+        for item in venda.itens.all():
+            produto = item.produto
+            produto.estoque.quantidade += item.quantidade
+            produto.estoque.save()
+
+        venda.delete()
+
+        return redirect('vendas')
+    
+    return redirect('vendas')
 
 
 # #######################################################################
