@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import json
 from django.http import JsonResponse
-from django.db.models import Q
+from django.db.models import Q, Sum
 from datetime import datetime, timedelta, timedelta
 
 
@@ -50,7 +50,46 @@ def offline_view(request):
 # #######################################################################
 @login_required(login_url='/')
 def dashboard_view(request):
-    return render(request, "dashboard.html")
+    num_produtos_estoque_baixo = Produto.objects.filter(user=request.user, estoque__quantidade__lt=5).count()
+    total_vendas = Venda.objects.filter(user=request.user).count()
+
+    now = timezone.now()
+
+    # vendas do mês atual
+    inicio_mes = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+    if now.month == 12:
+        proximo_mes = now.replace(year=now.year + 1, month=1, day=1)
+    else:
+        proximo_mes = now.replace(month=now.month + 1, day=1)
+
+    valor_vendas_no_mes = Venda.objects.filter(
+        user=request.user,
+        data_venda__gte=inicio_mes,
+        data_venda__lt=proximo_mes
+    ).aggregate(total=Sum('total'))['total'] or 0
+
+    # vendas de hoje
+    inicio_hoje = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    fim_hoje = inicio_hoje + timedelta(days=1)
+
+    valor_vendas_hoje = Venda.objects.filter(
+        user=request.user,
+        data_venda__gte=inicio_hoje,
+        data_venda__lt=fim_hoje
+    ).aggregate(total=Sum('total'))['total'] or 0
+
+    # ultimas vendas
+    ultimas_vendas = Venda.objects.filter(user=request.user).order_by('-data_venda')[:5]
+
+    context = {
+        'num_produtos_estoque_baixo': num_produtos_estoque_baixo,
+        'total_vendas': total_vendas,
+        'valor_vendas_no_mes': valor_vendas_no_mes,
+        'valor_vendas_hoje': valor_vendas_hoje,
+        'ultimas_vendas': ultimas_vendas
+    }
+    return render(request, "dashboard.html", context)
 
 
 # #######################################################################
@@ -273,6 +312,8 @@ def realizar_venda_view(request):
             fiado = data.get("fiado", False)
             cliente = data.get("clienteFiado")
             descricao = data.get("descricao")
+            forma_pagamento = data.get("formaPagamento")
+            print(f'formaPagamento: {forma_pagamento}')
 
             if not itens:
                 print("Nenhum item enviado.")
@@ -326,7 +367,8 @@ def realizar_venda_view(request):
                 total=total_calculado,
                 descricao=descricao,
                 user=request.user,
-                data_venda=timezone.now()
+                data_venda=timezone.now(),
+                forma_pagamento=forma_pagamento
             )
 
             # cria itens + baixa estoque

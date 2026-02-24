@@ -9,6 +9,7 @@ detalhesModal.addEventListener('show.bs.modal', function (event) {
     const descricao = button.getAttribute('data-venda-descricao');
     const data = button.getAttribute('data-venda-data');
     const total = button.getAttribute('data-venda-total');
+    const formaPagamento = button.getAttribute('data-forma-pagamento');
     const produtos = button.getAttribute('data-venda-produtos');
 
     document.getElementById('modalVendaId').innerText = id;
@@ -16,5 +17,6 @@ detalhesModal.addEventListener('show.bs.modal', function (event) {
     document.getElementById('modalVendaDescricao').innerText = descricao;
     document.getElementById('modalVendaData').innerText = data;
     document.getElementById('modalVendaTotal').innerText = total;
+    document.getElementById('modalVendaFormaPagamento').innerText = formaPagamento;
     document.getElementById('modalVendaProdutos').innerText = produtos;
 });

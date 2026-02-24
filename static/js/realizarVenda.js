@@ -40,7 +40,7 @@ function adicionarItem() {
         qtdCell.innerText = novaQtd;
 
         recalcular();
-        return; // 🔥 Não cria nova linha
+        return;
     }
 
     // 🔥 Se não existir, cria normal
@@ -62,6 +62,10 @@ function adicionarItem() {
     `;
 
     tbody.appendChild(row);
+
+    // limpar campos
+    select.value = "";
+    document.getElementById("quantidade").value = "1";
 
     recalcular();
 }
@@ -109,13 +113,15 @@ function finalizarVenda() {
 
     const fiado = document.getElementById("fiadoCheck").checked;
     const clienteFiado = document.getElementById("clienteFiado").value;
+    const formaPagamento = document.getElementById("forma-pagamento").value;
 
     const descricao = document.getElementById("descricaoVenda").value;
     const dados = {
         itens: itens,
         fiado: fiado,
         clienteFiado: clienteFiado,
-        descricao: descricao
+        descricao: descricao,
+        formaPagamento: formaPagamento
     };
 
     console.log(dados);
@@ -143,7 +149,7 @@ function finalizarVenda() {
                 document
                     .getElementById('vendaSucessoModal')
                     .addEventListener('hidden.bs.modal', function () {
-                        location.reload();
+                        window.location.href = "/vendas/";
                     });
             } else {
                 alert("Erro: " + data.message);
@@ -153,5 +159,3 @@ function finalizarVenda() {
             console.error("Erro:", error);
         });
 }
-
-

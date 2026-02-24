@@ -34,11 +34,17 @@ class Estoque(models.Model):
     
 
 class Venda(models.Model):
+    PAGAMENTO_CHOICES = [
+        ("dinheiro", "Dinheiro"),
+        ("pix", "Pix"),
+        ("dinheiro_pix", "Dinheiro + Pix"),
+    ]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     cliente = models.CharField(max_length=100, blank=True, null=True)
     data_venda = models.DateTimeField(auto_now_add=True)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     descricao = models.TextField(max_length=500, blank=True, null=True)
+    forma_pagamento = models.CharField(max_length=100, choices=PAGAMENTO_CHOICES, blank=True, null=True, default='pix')
 
     def __str__(self):
         return f'Venda #{self.id} - R$ {self.total}'
@@ -60,16 +66,9 @@ class VendaFiada(models.Model):
         ("parcial", "Parcial"),
         ("pago", "Pago"),
     ]
-    PAGAMENTO_CHOICES = [
-        ("dinheiro", "Dinheiro"),
-        ("cartao", "Cartão"),
-        ("pix", "Pix"),
-        ("outro", "Outro"),
-    ]
     venda = models.OneToOneField(Venda, on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pendente")
     total_pago = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    forma_pagamento = models.CharField(max_length=100, choices=PAGAMENTO_CHOICES, blank=True, null=True, default='pix')
 
     @property
     def total_pendente(self):
