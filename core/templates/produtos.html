@@ -68,7 +68,7 @@ Produtos
 
 <!-- Tabela -->
 <div class="card shadow-sm">
-    <div class="card-body">
+    <div class="card-body table-responsive">
         <table class="table table-hover align-middle">
             <thead>
                 <tr>
@@ -94,7 +94,7 @@ Produtos
                     {% else %}
                     <td><span class="badge bg-danger">{{ produto.estoque.status }}</span></td>
                     {% endif %}
-                    <td class="text-end">
+                    <td class="text-end d-flex gap-1">
                         <a href="{% url 'produtos_editar' produto.id %}" class="btn btn-sm btn-warning">
                             <i class="bi bi-pencil"></i>
                         </a>

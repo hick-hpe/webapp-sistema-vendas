@@ -59,7 +59,7 @@ Vendas
 
 <!-- Tabela -->
 <div class="card shadow-sm">
-    <div class="card-body">
+    <div class="card-body table-responsive">
         <table class="table table-hover align-middle">
             <thead>
                 <tr>
@@ -67,7 +67,7 @@ Vendas
                     <th>Descrição</th>
                     <th>Data</th>
                     <th>Total</th>
-                    <th>Forma de Pagamento</th>
+                    <th>Pagamento</th>
                     <th class="text-end">Ações</th>
                 </tr>
             </thead>
@@ -79,7 +79,7 @@ Vendas
                     <td>{{ venda.data_venda|date:"d/m/Y - H:i" }}</td>
                     <td>R$ {{ venda.total }}</td>
                     <td>{{ venda.get_forma_pagamento_display }}</td>
-                    <td class="text-end">
+                    <td class="text-end d-flex gap-1">
                         <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detalhesVenda"
                             data-venda-id="{{ venda.id }}"
                             data-venda-cliente="{{ venda.cliente }}"
@@ -119,7 +119,7 @@ Vendas
                 <p><strong>Descrição:</strong> <span id="modalVendaDescricao"></span></p>
                 <p><strong>Data:</strong> <span id="modalVendaData"></span></p>
                 <p><strong>Total:</strong> R$ <span id="modalVendaTotal"></span></p>
-                <p><strong>Forma de Pagamento:</strong> <span id="modalVendaFormaPagamento"></span></p>
+                <p><strong>Pagamento:</strong> <span id="modalVendaFormaPagamento"></span></p>
                 <p><strong>Produtos:</strong> <span id="modalVendaProdutos"></span></p>
             </div>
             <div class="modal-footer">

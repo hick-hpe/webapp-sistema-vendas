@@ -29,22 +29,12 @@ Compras Fiado
             <div class="row g-3">
 
                 <div class="col-md-4">
-                    <input 
-                        type="text"
-                        name="buscar"
-                        value="{{ request.GET.buscar }}"
-                        class="form-control"
-                        placeholder="Buscar por cliente, descrição ou ID..."
-                    >
+                    <input type="text" name="buscar" value="{{ request.GET.buscar }}" class="form-control"
+                        placeholder="Buscar por cliente, descrição ou ID...">
                 </div>
 
                 <div class="col-md-3">
-                    <input 
-                        type="date"
-                        name="data"
-                        value="{{ request.GET.data }}"
-                        class="form-control"
-                    >
+                    <input type="date" name="data" value="{{ request.GET.data }}" class="form-control">
                 </div>
 
                 <div class="col-md-2">
@@ -68,7 +58,7 @@ Compras Fiado
 
 <!-- Tabela -->
 <div class="card shadow-sm">
-    <div class="card-body">
+    <div class="card-body table-responsive">
         <table class="table table-hover align-middle">
             <thead>
                 <tr>
@@ -101,7 +91,7 @@ Compras Fiado
                         <span class="badge bg-secondary">Desconhecido</span>
                         {% endif %}
                     </td>
-                    <td class="text-end">
+                    <td class="text-end d-flex gap-1">
                         <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#pagarVendaFiado"
                             data-id="{{ venda_fiado.id }}">
                             <i class="bi bi-cash"></i>
@@ -138,11 +128,12 @@ Compras Fiado
 </div>
 
 <!-- Modal Pagar -->
-<div class="modal fade" id="pagarVendaFiado" tabindex="-1" aria-labelledby="pagarVendaFiadoLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="pagarVendaFiado" tabindex="-1" aria-labelledby="pagarVendaFiadoLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="pagarVendaFiadoLabel">Registrar Pagamento</h5>
+                <h5 class="modal-title" id="pagarVendaFiadoLabel">Detalhes da Venda Fiada</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -160,7 +151,6 @@ Compras Fiado
         </div>
     </div>
 </div>
-
 
 <!-- Modal Detalhes da Venda -->
 <div class="modal fade" id="detalhesVendaFiado" tabindex="-1" aria-labelledby="detalhesVendaFiadoLabel"
