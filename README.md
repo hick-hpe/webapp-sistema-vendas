@@ -1,14 +1,38 @@
-# Criando um PWA com Django
+# 🛒 Sistema de Vendas
 
-Este projeto é um exemplo de **Progressive Web App (PWA)** usando o **framework Django**.  
-O objetivo é mostrar como transformar um site Django em um app instalável com funcionalidades básicas offline.
+O **Sistema de Vendas** é uma aplicação web desenvolvida com o framework Django, projetada para auxiliar no controle e gestão de vendas, produtos e categorias.
 
-## 🎯 Funcionalidades
+O projeto também foi configurado como **Progressive Web App (PWA)**, permitindo que seja instalado em dispositivos móveis ou desktops e utilizado com suporte básico offline.
 
-- Páginas instaláveis como aplicativo no celular ou desktop  
-- Funciona offline com uma página de fallback (`offline.html`)  
-- Estrutura simples para testes e aprendizado  
-- Suporte a ícones e splash screens (configurado via `django-pwa`)  
+## 🎯 Objetivo
+Oferecer uma plataforma simples e funcional para:
+
+- Controle de produtos
+- Gerenciamento de categorias
+- Registro de vendas
+- Controle de vendas fiado
+- Visualização de dados no dashboard
+
+Ideal para pequenos comércios ou uso pessoal.
+
+## 🚀 Funcionalidades
+- 📊 Dashboard com visão geral do sistema
+- 📦 Cadastro e gerenciamento de produtos
+- 🏷️ Organização por categorias
+- 🛒 Registro de vendas
+- 💳 Controle de vendas fiado
+- 📱 Instalável como aplicativo (PWA)
+- 🌐 Página offline (`offline.html`)
+- 🔐 Sistema de autenticação de usuários
+
+## 🛠️ Tecnologias Utilizadas
+- Django
+- Bootstrap 5
+- Bootstrap Icons
+- django-pwa
+- HTML5 + CSS3 + JavaScript
+
+HTML5 + CSS3 + JavaScript
 
 ## 💻 Pré-requisitos
 
@@ -20,8 +44,8 @@ O objetivo é mostrar como transformar um site Django em um app instalável com 
 
 1. Clone o repositório:
     ```bash
-    git clone https://github.com/hick-hpe/django-pwa-teste.git
-    cd django-pwa-teste
+    git clone https://github.com/hick-hpe/webapp-sistema-vendas.git
+    cd webapp-sistema-vendas
     ```
 
 2. Crie e ative um ambiente virtual:

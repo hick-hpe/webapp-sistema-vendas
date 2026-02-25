@@ -37,13 +37,13 @@ def login_view(request):
         else:
             messages.error(request, 'Email ou senha inválidos.')
 
-    return render(request, 'login.html')
+    return render(request, 'auth/login.html')
 
 # #######################################################################
 #                              OFFLINE
 # #######################################################################
 def offline_view(request):
-    return render(request, "offline.html")
+    return render(request, "offline/offline.html")
 
 # #######################################################################
 #                              DASHBOARD
@@ -89,7 +89,7 @@ def dashboard_view(request):
         'valor_vendas_hoje': valor_vendas_hoje,
         'ultimas_vendas': ultimas_vendas
     }
-    return render(request, "dashboard.html", context)
+    return render(request, "dashboard/dashboard.html", context)
 
 
 # #######################################################################
@@ -123,7 +123,7 @@ def categorias_view(request):
         'categorias': categorias,
         'form': form
     }
-    return render(request, "categorias.html", context)
+    return render(request, "categorias/categorias.html", context)
 
 
 # categorias: PUT
@@ -148,7 +148,7 @@ def categorias_editar_view(request, id):
         'form': form,
         'categoria': categoria
     }
-    return render(request, "categorias_editar.html", context)
+    return render(request, "categorias/categorias_editar.html", context)
 
 
 # categorias: DELETE
@@ -201,7 +201,7 @@ def produtos_view(request):
         'categorias': Categoria.objects.filter(user=request.user),
         'form': form,
     }
-    return render(request, "produtos.html", context)
+    return render(request, "produtos/produtos.html", context)
 
 
 # produtos: PUT
@@ -239,7 +239,7 @@ def produtos_editar_view(request, id):
         'form': form,
         'produto': produto
     }
-    return render(request, "produtos_editar.html", context)
+    return render(request, "produtos/produtos_editar.html", context)
 
 # produtos: DELETE
 @login_required(login_url='/')
@@ -297,7 +297,7 @@ def vendas_view(request):
         'vendas': vendas
     }
 
-    return render(request, "vendas.html", context)
+    return render(request, "vendas/vendas.html", context)
 
 
 @transaction.atomic
@@ -408,7 +408,7 @@ def realizar_venda_view(request):
         'produtos': Produto.objects.filter(user=request.user)
     }
 
-    return render(request, "realizar-venda.html", context)
+    return render(request, "vendas/realizar-venda.html", context)
 
 
 # vendas: DELETE
@@ -472,7 +472,7 @@ def vendas_fiado_view(request):
     context = {
         "vendas_fiado": vendas_fiado
     }
-    return render(request, "vendas-fiado.html", context)
+    return render(request, "vendas/vendas-fiado.html", context)
 
 
 # vendas_fiado: PAY
