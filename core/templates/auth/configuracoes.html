@@ -8,11 +8,11 @@
     <h3 class="mb-4">Configurações da Conta</h3>
 
     {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-info">
-                {{ message }}
-            </div>
-        {% endfor %}
+    {% for message in messages %}
+    <div class="alert alert-info">
+        {{ message }}
+    </div>
+    {% endfor %}
     {% endif %}
 
     <!-- ALTERAR DADOS -->
@@ -26,14 +26,12 @@
 
                 <div class="mb-3">
                     <label class="form-label">Nome</label>
-                    <input type="text" name="nome" class="form-control"
-                           value="{{ request.user.first_name }}" required>
+                    <input type="text" name="nome" class="form-control" value="{{ request.user.first_name }}" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Email</label>
-                    <input type="email" name="email" class="form-control"
-                           value="{{ request.user.email }}" required>
+                    <input type="email" name="email" class="form-control" value="{{ request.user.email }}" required>
                 </div>
 
                 <button class="btn btn-dark">Salvar alterações</button>
@@ -51,8 +49,7 @@
                 <input type="hidden" name="form_type" value="update_password">
 
                 <div class="mb-3">
-                    <input type="password" name="nova_senha"
-                           class="form-control" placeholder="Nova senha" required>
+                    <input type="password" name="nova_senha" class="form-control" placeholder="Nova senha" required>
                 </div>
 
                 <button class="btn btn-warning">Alterar senha</button>
@@ -64,15 +61,49 @@
     <div class="card border-danger">
         <div class="card-body">
             <h5 class="text-danger">Excluir Conta</h5>
-            <form method="post"
-                  onsubmit="return confirm('Tem certeza que deseja excluir sua conta?');">
+
+            <form method="post" id="deleteAccountForm">
                 {% csrf_token %}
                 <input type="hidden" name="form_type" value="delete_account">
 
-                <button class="btn btn-danger">
+                <!-- Botão abre o modal -->
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                    data-bs-target="#confirmDeleteModal">
                     Excluir minha conta
                 </button>
             </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title text-danger">Confirmar exclusão</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <p>Tem certeza que deseja excluir sua conta?</p>
+                    <p class="text-danger fw-bold">
+                        Essa ação é permanente e não poderá ser desfeita.
+                    </p>
+                </div>
+
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <!-- Botão envia o form -->
+                    <button type="button" class="btn btn-danger"
+                        onclick="document.getElementById('deleteAccountForm').submit();">
+                        Sim, excluir conta
+                    </button>
+                </div>
+
+            </div>
         </div>
     </div>
 
