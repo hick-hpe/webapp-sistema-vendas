@@ -27,7 +27,7 @@ def login_view(request):
             username = usuario_obj.username
         except User.DoesNotExist:
             messages.error(request, 'Email ou senha inválidos.')
-            return render(request, 'login.html')
+            return render(request, 'auth/login.html')
 
         # autenticação
         user = authenticate(request, username=username, password=senha)
