@@ -363,7 +363,7 @@ def realizar_venda_view(request):
 
             # cria a venda
             venda_obj = Venda.objects.create(
-                cliente=cliente if fiado else None,
+                cliente=cliente,
                 total=total_calculado,
                 descricao=descricao,
                 user=request.user,
@@ -383,6 +383,9 @@ def realizar_venda_view(request):
 
                 produto.estoque.quantidade -= quantidade
                 produto.estoque.save()
+            
+            print(f"Venda criada com sucesso. ID: {venda_obj.id}, Total: {total_calculado}")
+            print(f"Cliente: [{cliente}, {venda_obj.cliente}], Fiado: {fiado}, Itens: {len(produtos_processados)}")
             
             # venda fiada
             if fiado:

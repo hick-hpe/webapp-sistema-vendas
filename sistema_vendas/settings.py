@@ -31,7 +31,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
     '192.168.3.27',
-    'palermo.pythonanywhere.com'
+    # 'palermo.pythonanywhere.com'
 ]
 
 # Application definition
@@ -148,7 +148,7 @@ PWA_APP_DISPLAY = 'standalone'
 PWA_APP_SCOPE = '/'
 PWA_APP_ORIENTATION = 'any'
 PWA_APP_START_URL = '/'
-PWA_APP_OFFLINE_URL = '/offline/' # rota offline
+PWA_APP_OFFLINE_URL = '/offline/'
 PWA_APP_STATUS_BAR_COLOR = 'default'
 PWA_APP_ICONS = [
     {
