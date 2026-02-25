@@ -1,5 +1,14 @@
+html, body {
+    height: 100%;
+}
+
 body {
     margin: 0;
+    overflow: hidden; /* impede scroll geral */
+}
+
+.layout {
+    height: 100vh;
 }
 
 .sidebar {
@@ -16,7 +25,8 @@ body {
 }
 
 main {
-    max-width: 100vw;
+    flex: 1;
+    overflow-y: auto;
     overflow-x: hidden;
 }
 

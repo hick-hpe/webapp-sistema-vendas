@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import CategoriaForm, ProdutoForm
 from .models import Categoria, Estoque, Produto, Venda, ItemVenda, VendaFiada
 from django.contrib.auth.models import User
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import json
@@ -38,6 +38,72 @@ def login_view(request):
             messages.error(request, 'Email ou senha inválidos.')
 
     return render(request, 'auth/login.html')
+
+
+def cadastro_view(request):
+    if request.method == "POST":
+        nome = request.POST.get("nome")
+        email = request.POST.get("email")
+        senha = request.POST.get("senha")
+        confirmar_senha = request.POST.get("confirmar_senha")
+
+        # validar senha
+        if senha != confirmar_senha:
+            messages.error(request, "As senhas não coincidem.")
+            return render(request, "auth/cadastro.html")
+
+        # verificar se email já existe
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Email já cadastrado.")
+            return render(request, "auth/cadastro.html")
+
+        # criar usuário
+        user = User.objects.create_user(
+            username=nome,
+            email=email,
+            password=senha,
+            first_name=nome
+        )
+
+        login(request, user)
+        return redirect("dashboard")
+
+    return render(request, "auth/cadastro.html")
+
+
+@login_required(login_url='/')
+def configuracoes_view(request):
+
+    if request.method == "POST":
+        form_type = request.POST.get("form_type")
+
+        # Atualizar perfil
+        if form_type == "update_profile":
+            request.user.first_name = request.POST.get("nome")
+            request.user.email = request.POST.get("email")
+            request.user.username = request.POST.get("nome")
+            request.user.save()
+
+            messages.success(request, "Dados atualizados com sucesso.")
+            return redirect("configuracoes")
+
+        # Alterar senha
+        if form_type == "update_password":
+            nova_senha = request.POST.get("nova_senha")
+            request.user.set_password(nova_senha)
+            request.user.save()
+
+            update_session_auth_hash(request, request.user)
+            messages.success(request, "Senha alterada com sucesso.")
+            return redirect("configuracoes")
+
+        # Excluir conta
+        if form_type == "delete_account":
+            request.user.delete()
+            logout(request)
+            return redirect("login")
+
+    return render(request, "auth/configuracoes.html")
 
 # #######################################################################
 #                              OFFLINE
