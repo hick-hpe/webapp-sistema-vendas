@@ -11,7 +11,13 @@ from django.contrib import messages
 import json
 from django.http import JsonResponse
 from django.db.models import Q, Sum
-from datetime import datetime, timedelta, timedelta
+from datetime import datetime, time, timedelta, timedelta
+from reportlab.pdfgen import canvas
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import A4
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
 
 
 # #######################################################################
@@ -104,6 +110,14 @@ def configuracoes_view(request):
             return redirect("login")
 
     return render(request, "auth/configuracoes.html")
+
+
+@login_required(login_url='/')
+def logout_view(request):
+    print('Fazendo logout...')
+    logout(request)
+    return redirect('login')
+
 
 # #######################################################################
 #                              OFFLINE
@@ -593,10 +607,174 @@ def vendas_fiado_excluir_view(request, id):
     return redirect('vendas_fiado')
 
 # #######################################################################
-#                               LOGOUT
+#                               RELATORIOS
 # #######################################################################
-@login_required(login_url='/')
-def logout_view(request):
-    print('Fazendo logout...')
-    logout(request)
-    return redirect('login')
+def relatorios_view(request):
+    return render(request, "relatorios/relatorios.html")
+
+
+def gerar_relatorio_view(request):
+
+    periodo = request.GET.get('periodo')
+    data_inicio = request.GET.get('data_inicio')
+    data_fim = request.GET.get('data_fim')
+
+    vendas = Venda.objects.filter(user=request.user)
+    hoje = timezone.now().date()
+
+    # ================= FILTROS =================
+
+    if periodo == 'hoje':
+        inicio = datetime.combine(hoje, time.min)
+        fim = datetime.combine(hoje, time.max)
+        vendas = vendas.filter(data_venda__range=[inicio, fim])
+
+        print(f"Gerando relatório para hoje: {hoje}. Vendas encontradas: {vendas.count()}")
+
+    elif periodo == 'semana':
+        inicio_semana = hoje - timedelta(days=hoje.weekday())
+        fim_semana = inicio_semana + timedelta(days=6)
+
+        vendas = vendas.filter(
+            data_venda__range=[
+                datetime.combine(inicio_semana, time.min),
+                datetime.combine(fim_semana, time.max)
+            ]
+        )
+
+        print(f"Gerando relatório para esta semana: {inicio_semana} a {fim_semana}. Vendas encontradas: {vendas.count()}")
+
+    elif periodo == 'mes':
+        primeiro_dia = hoje.replace(day=1)
+
+        if hoje.month == 12:
+            proximo_mes = hoje.replace(year=hoje.year + 1, month=1, day=1)
+        else:
+            proximo_mes = hoje.replace(month=hoje.month + 1, day=1)
+
+        ultimo_dia = proximo_mes - timedelta(days=1)
+
+        vendas = vendas.filter(
+            data_venda__range=[
+                datetime.combine(primeiro_dia, time.min),
+                datetime.combine(ultimo_dia, time.max)
+            ]
+        )
+
+        print(f"Gerando relatório para este mês: {primeiro_dia} a {ultimo_dia}. Vendas encontradas: {vendas.count()}")
+
+    elif data_inicio and data_fim:
+        primeiro_dia = datetime.strptime(data_inicio, "%Y-%m-%d").date()
+        ultimo_dia = datetime.strptime(data_fim, "%Y-%m-%d").date()
+
+        vendas = vendas.filter(
+            data_venda__range=[
+                datetime.combine(primeiro_dia, time.min),
+                datetime.combine(ultimo_dia, time.max)
+            ]
+        )
+
+        print(f"Gerando relatório para o período: {data_inicio} a {data_fim}. Vendas encontradas: {vendas.count()}")
+
+    # ================= PDF =================
+
+    response = HttpResponse(content_type='application/pdf')
+    nome = f"relatorio_{request.user.username}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+    tipo_exibicao = "attachment" # "inline" para exibir no navegador, "attachment" para download
+    response['Content-Disposition'] = f'{tipo_exibicao}; filename="{nome}"'
+
+    doc = SimpleDocTemplate(response, pagesize=A4)
+    doc.title = "Relatório de Vendas"
+    elementos = []
+    styles = getSampleStyleSheet()
+
+    # Título
+    elementos.append(Paragraph("<b>RELATÓRIO DE VENDAS</b>", styles["Title"]))
+    elementos.append(Spacer(1, 20))
+
+    elementos.append(Paragraph(
+        f"<b>Dados de vendas:</b>",
+        styles["Normal"]
+    ))
+    elementos.append(Spacer(1, 10))
+
+    # Cabeçalho da tabela
+    dados = [["Data", "Cliente", "Descrição", "Total"]]
+
+    total_geral = Decimal("0.00")
+
+    for venda in vendas:
+        dados.append([
+            venda.data_venda.strftime('%d/%m/%Y'),
+            venda.cliente if venda.cliente else "-",
+            Paragraph(venda.descricao if venda.descricao else "-", styles["Normal"]),
+            f"R$ {venda.total:,.2f}"
+        ])
+
+        total_geral += venda.total
+
+    # Linha total
+    dados.append(["", "", "TOTAL GERAL", f"R$ {total_geral:,.2f}"])
+
+    # LARGURA DAS COLUNAS
+    tabela = Table(
+        dados,
+        colWidths=[100, 200, 100, 100]
+    )
+
+    tabela.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('ALIGN', (2, 1), (2, -1), 'RIGHT'),
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+        ('BACKGROUND', (0, -1), (-1, -1), colors.whitesmoke),
+        ('VALIGN', (0,0), (-1,-1), 'TOP'),
+    ]))
+
+    elementos.append(tabela)
+
+    elementos.append(Spacer(1, 30))
+
+    elementos.append(Paragraph(
+        "<b>Dados de estoque geral:</b>",
+        styles["Normal"]
+    ))
+    elementos.append(Spacer(1, 10))
+
+    # estoque dos produtos
+    dados_estoque = [["Produto", "Quantidade", "Status"]]
+    produtos_estoque = Produto.objects.filter(user=request.user).select_related('estoque')
+
+    for produto in produtos_estoque:
+        dados_estoque.append([
+            produto.nome,
+            produto.estoque.quantidade if produto.estoque else 0,
+            "Baixo" if produto.estoque and produto.estoque.quantidade < 5 else "OK"
+        ])
+
+    tabela_estoque = Table(
+        dados_estoque,
+        colWidths=[300, 100, 100]
+    )
+    colunas_estoque_baixo = []
+    for i, linha in enumerate(dados_estoque[1:], 1):  # Começa do índice 1 (segunda linha)
+        if linha[2] == "Baixo":
+            colunas_estoque_baixo.append(i)
+    
+    styles_tabela = [
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('ALIGN', (1, 1), (1, -1), 'RIGHT'),
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+    ]
+
+    for coluna in colunas_estoque_baixo:
+        styles_tabela.append(('BACKGROUND', (0, coluna), (-1, coluna), colors.HexColor("#FFCCCC")))
+
+    tabela_estoque.setStyle(TableStyle(styles_tabela))
+
+    elementos.append(tabela_estoque)
+
+    doc.build(elementos)
+
+    return response

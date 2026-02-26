@@ -6,6 +6,7 @@ urlpatterns = [
     path('', views.login_view, name='login'),
     path('cadastro/', views.cadastro_view, name='cadastro'),
     path('configuracoes/', views.configuracoes_view, name='configuracoes'),
+    path('logout/', views.logout_view, name='logout'),
 
     # dashboard
     path('dashboard/', views.dashboard_view, name='dashboard'),
@@ -33,6 +34,7 @@ urlpatterns = [
     # offline
     path('offline/', views.offline_view, name='offline'),
 
-    # logout
-    path('logout/', views.logout_view, name='logout'),
+    # relatorios
+    path('relatorios/', views.relatorios_view, name='relatorios'),
+    path('gerar-relatorio/', views.gerar_relatorio_view, name='gerar_relatorio'),
 ]

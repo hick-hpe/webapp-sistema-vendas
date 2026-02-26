@@ -87,7 +87,6 @@ function recalcular() {
         const preco = parseFloat(row.children[2].innerText);
         const total = qtd * preco;
 
-        row.querySelector(".total-item").innerText = total.toFixed(2);
         totalGeral += total;
     });
 
@@ -159,3 +158,17 @@ function finalizarVenda() {
             console.error("Erro:", error);
         });
 }
+
+
+document.addEventListener('input', function (event) {
+    if (event.target.classList.contains('total-item')) {
+        recalcular();
+    } else if (event.target.contentEditable === 'true') {
+        const linha = event.target.closest('tr');
+        const precoUnitario = parseFloat(event.target.textContent);
+        const quantidade = parseInt(linha.children[1].textContent);
+        const totalItem = precoUnitario * quantidade;
+        linha.querySelector('.total-item').textContent = totalItem.toFixed(2);
+        recalcular();
+    }
+});

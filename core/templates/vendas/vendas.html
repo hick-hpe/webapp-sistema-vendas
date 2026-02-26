@@ -79,7 +79,7 @@ Vendas
                     <td>{{ venda.data_venda|date:"d/m/Y - H:i" }}</td>
                     <td>R$ {{ venda.total }}</td>
                     <td>{{ venda.get_forma_pagamento_display }}</td>
-                    <td class="text-end d-flex gap-1">
+                    <td class="text-end d-flex justify-content-end gap-1">
                         <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detalhesVenda"
                             data-venda-id="{{ venda.id }}"
                             data-venda-cliente="{{ venda.cliente }}"
