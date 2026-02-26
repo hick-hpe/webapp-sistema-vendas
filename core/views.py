@@ -676,8 +676,11 @@ def gerar_relatorio_view(request):
 
         print(f"Gerando relatório para o período: {data_inicio} a {data_fim}. Vendas encontradas: {vendas.count()}")
 
-    # ================= PDF =================
+    return gerar_pdf(request, vendas)
 
+
+# ================= PDF =================
+def gerar_pdf(request, vendas):
     response = HttpResponse(content_type='application/pdf')
     nome = f"relatorio_{request.user.username}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
     tipo_exibicao = "attachment" # "inline" para exibir no navegador, "attachment" para download
