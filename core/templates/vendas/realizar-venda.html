@@ -50,20 +50,39 @@ Realizar Venda
             <div class="card-body">
 
                 <h5 class="mb-3">Itens da Venda</h5>
+                <small class="text-muted">
+                    Clique no valor unitário para editar.
+                </small>
+                <div class="table-responsive">
 
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Produto</th>
-                            <th>Qtd</th>
-                            <th>Valor Unit.</th>
-                            <th>Total</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody id="listaItens">
-                    </tbody>
-                </table>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Qtd</th>
+                                <th class="text-nowrap">
+                                    Valor Unit. <i class="bi bi-pencil-fill text-muted" title="Clique para editar"></i>
+                                </th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaItens">
+                            <tr>
+                                <td>Prod</td>
+                                <td>2</td>
+                                <td contenteditable="true">2</td>
+                                <td>10</td>
+                                <td>
+                                    <button class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
 
                 <hr>
 
