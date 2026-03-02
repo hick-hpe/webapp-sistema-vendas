@@ -19,6 +19,17 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 
+# #######################################################################
+#                            PAGINAS DE ERROS
+# #######################################################################
+def erro_404(request, exception):
+    return render(request, "errors/404.html", status=404)
+
+def erro_403(request, exception):
+    return render(request, "errors/403.html", status=403)
+
+def erro_500(request):
+    return render(request, "errors/500.html", status=500)
 
 # #######################################################################
 #                           AUTENTICACAO

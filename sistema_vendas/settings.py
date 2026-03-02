@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-@xxm9_kdc4we1$!cv4_v5z2r25sbt7g#0d4^ajoc!hr&ub5xd#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # testes
 ALLOWED_HOSTS = [
@@ -147,7 +147,7 @@ PWA_APP_THEME_COLOR = '#0A0302'
 PWA_APP_BACKGROUND_COLOR = '#ffffff'
 PWA_APP_DISPLAY = 'standalone'
 PWA_APP_SCOPE = '/'
-PWA_APP_ORIENTATION = 'any'
+PWA_APP_ORIENTATION = 'portrait'
 PWA_APP_START_URL = '/'
 PWA_APP_OFFLINE_URL = '/offline/'
 PWA_APP_STATUS_BAR_COLOR = 'default'
