@@ -51,7 +51,7 @@ Realizar Venda
 
                 <h5 class="mb-3">Itens da Venda</h5>
                 <small class="text-muted">
-                    Clique no valor unitário para editar.
+                    Clique em <strong>Valor Unit.</strong> ou <strong>Qtd</strong> para editar.
                 </small>
                 <div class="table-responsive">
 
@@ -59,7 +59,10 @@ Realizar Venda
                         <thead>
                             <tr>
                                 <th>Produto</th>
-                                <th>Qtd</th>
+                                <!-- <th>Qtd</th> -->
+                                <th class="text-nowrap">
+                                    Qtd. <i class="bi bi-pencil-fill text-muted" title="Clique para editar"></i>
+                                </th>
                                 <th class="text-nowrap">
                                     Valor Unit. <i class="bi bi-pencil-fill text-muted" title="Clique para editar"></i>
                                 </th>
@@ -67,22 +70,9 @@ Realizar Venda
                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody id="listaItens">
-                            <tr>
-                                <td>Prod</td>
-                                <td>2</td>
-                                <td contenteditable="true">2</td>
-                                <td>10</td>
-                                <td>
-                                    <button class="btn btn-sm btn-danger">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
+                        <tbody id="listaItens"></tbody>
                     </table>
                 </div>
-
 
                 <hr>
 
@@ -95,6 +85,7 @@ Realizar Venda
                 </div>
 
                 <div class="mb-3">
+                    <label for="clienteFiado">Cliente</label>
                     <input type="text" id="clienteFiado" class="form-control" placeholder="Nome do cliente">
                 </div>
 
@@ -111,6 +102,11 @@ Realizar Venda
                     <label class="form-label">Descrição da venda</label>
                     <textarea id="descricaoVenda" class="form-control" rows="5" style="resize: none;"
                         placeholder="Observações da venda (opcional, max: 255)" maxlength="255"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="desconto">Desconto</label>
+                    <input type="number" min="0" step="0.01" id="desconto" class="form-control" placeholder="Ex: 0.00">
                 </div>
 
                 <h4 class="text-end">

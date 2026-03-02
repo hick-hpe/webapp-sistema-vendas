@@ -7,8 +7,10 @@ excluirModal.addEventListener('show.bs.modal', function (event) {
     const vendaId = button.getAttribute('data-id');
     const vendaNome = button.getAttribute('data-nome');
 
+    console.log('ID: ', vendaId)
+
     const nomeVenda = excluirModal.querySelector('#nomeVenda');
-    nomeVenda.textContent = vendaNome;
+    nomeVenda.textContent = vendaNome.includes("-") ? `#${vendaId}` : vendaNome;
 
     const form = excluirModal.querySelector('#formExcluirVenda');
     form.action = `/vendas/${vendaId}/excluir/`;

@@ -393,7 +393,7 @@ def realizar_venda_view(request):
             cliente = data.get("clienteFiado")
             descricao = data.get("descricao")
             forma_pagamento = data.get("formaPagamento")
-            print(f'formaPagamento: {forma_pagamento}')
+            desconto = data.get("desconto")
 
             if not itens:
                 print("Nenhum item enviado.")
@@ -444,11 +444,12 @@ def realizar_venda_view(request):
             # cria a venda
             venda_obj = Venda.objects.create(
                 cliente=cliente,
-                total=total_calculado,
+                total=total_calculado-desconto,
                 descricao=descricao,
                 user=request.user,
                 data_venda=timezone.now(),
-                forma_pagamento=forma_pagamento
+                forma_pagamento=forma_pagamento,
+                desconto=desconto if desconto > 0 else 0
             )
 
             # cria itens + baixa estoque
@@ -684,6 +685,7 @@ def gerar_pdf(request, vendas):
     response = HttpResponse(content_type='application/pdf')
     nome = f"relatorio_{request.user.username}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
     tipo_exibicao = "attachment" # "inline" para exibir no navegador, "attachment" para download
+    tipo_exibicao = "inline" # "inline" para exibir no navegador, "attachment" para download
     response['Content-Disposition'] = f'{tipo_exibicao}; filename="{nome}"'
 
     doc = SimpleDocTemplate(response, pagesize=A4)
@@ -737,6 +739,49 @@ def gerar_pdf(request, vendas):
     elementos.append(tabela)
 
     elementos.append(Spacer(1, 30))
+
+    # ###################################################################
+
+    elementos.append(Paragraph(
+        f"<b>Descontos nas vendas:</b>",
+        styles["Normal"]
+    ))
+    elementos.append(Spacer(1, 10))
+
+    dados_vendas = [["Com desconto", "Sem desconto", "Total de vendas", "Total R$"]]
+
+    vendas = Venda.objects.filter(user=request.user)
+    total_vendas = vendas.count()
+    total_vendas_desconto = vendas.filter(desconto__gt=0).count()
+    soma_desconto = vendas.filter(desconto__gt=0).aggregate(total=Sum('desconto'))['total'] or 0
+    soma_desconto = f"R$ {soma_desconto:.2f}"
+
+    dados_vendas.append([
+        total_vendas_desconto,
+        (total_vendas - total_vendas_desconto),
+        total_vendas,
+        soma_desconto
+    ])
+
+    TAM = 500 / 4
+    tabela = Table(
+        dados_vendas,
+        colWidths=[TAM, TAM, TAM, TAM]
+    )
+
+    tabela.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+        ('BACKGROUND', (0, -1), (-1, -1), colors.whitesmoke),
+        ('VALIGN', (0,0), (-1,-1), 'TOP'),
+    ]))
+
+    elementos.append(tabela)
+
+    elementos.append(Spacer(1, 30))
+    
+    # ###################################################################
 
     elementos.append(Paragraph(
         "<b>Dados de estoque geral:</b>",

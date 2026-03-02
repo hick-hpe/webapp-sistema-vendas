@@ -86,7 +86,9 @@ Vendas
                             data-venda-descricao="{{ venda.descricao|default:'---' }}"
                             data-venda-data="{{ venda.data_venda|date:'d/m/Y - H:i' }}"
                             data-venda-total="{{ venda.total }}" data-venda-produtos="{% for item in venda.itens.all %}{{ item.produto.nome }} - {{ item.quantidade }}x{% if not forloop.last %}, {% endif %}{% endfor %}"
-                            data-forma-pagamento="{{ venda.get_forma_pagamento_display }}">
+                            data-forma-pagamento="{{ venda.get_forma_pagamento_display }}"
+                            data-venda-desconto="{{ venda.desconto }}"
+                            >
                             <i class="bi bi-eye"></i>
                         </button>
                         <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#excluirVenda"
@@ -119,6 +121,7 @@ Vendas
                 <p><strong>Descrição:</strong> <span id="modalVendaDescricao"></span></p>
                 <p><strong>Data:</strong> <span id="modalVendaData"></span></p>
                 <p><strong>Total:</strong> R$ <span id="modalVendaTotal"></span></p>
+                <p><strong>Desconto:</strong> R$ <span id="modalVendaDesconto"></span></p>
                 <p><strong>Pagamento:</strong> <span id="modalVendaFormaPagamento"></span></p>
                 <p><strong>Produtos:</strong> <span id="modalVendaProdutos"></span></p>
             </div>

@@ -46,6 +46,7 @@ class Venda(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     descricao = models.TextField(max_length=500, blank=True, null=True)
     forma_pagamento = models.CharField(max_length=100, choices=PAGAMENTO_CHOICES, blank=True, null=True, default='pix')
+    desconto = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def __str__(self):
         return f'Venda #{self.id} - R$ {self.total}'
