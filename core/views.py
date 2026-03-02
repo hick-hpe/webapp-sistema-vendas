@@ -685,7 +685,7 @@ def gerar_pdf(request, vendas):
     response = HttpResponse(content_type='application/pdf')
     nome = f"relatorio_{request.user.username}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
     tipo_exibicao = "attachment" # "inline" para exibir no navegador, "attachment" para download
-    tipo_exibicao = "inline" # "inline" para exibir no navegador, "attachment" para download
+    # tipo_exibicao = "inline" # "inline" para exibir no navegador, "attachment" para download
     response['Content-Disposition'] = f'{tipo_exibicao}; filename="{nome}"'
 
     doc = SimpleDocTemplate(response, pagesize=A4)
