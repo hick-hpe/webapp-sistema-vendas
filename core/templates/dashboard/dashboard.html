@@ -50,6 +50,29 @@ Dashboard
     </div>
 </div>
 
+<!-- Graficos -->
+<div class="row mb-4 g-3">
+
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted">Descontos nas Vendas</h6>
+                <canvas id="graficoDesconto"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted">Vendas últimos 7 dias</h6>
+                <canvas id="graficoVendas"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
 <!-- Tabela -->
 <div class="card shadow-sm">
     <div class="card-body table-responsive">
@@ -81,5 +104,47 @@ Dashboard
         </table>
     </div>
 </div>
-
 {% endblock content %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+    const ctxDesconto = document.getElementById('graficoDesconto');
+
+    new Chart(ctxDesconto, {
+        type: 'pie',
+        data: {
+            labels: ['Com desconto', 'Sem desconto'],
+            datasets: [{
+                data: [{{ vendas_com_desconto }}, {{ vendas_sem_desconto }}],
+        backgroundColor: ['#ff6384', '#36a2eb']
+    }]
+    }
+});
+
+
+    const ctxVendas = document.getElementById('graficoVendas');
+
+    new Chart(ctxVendas, {
+        type: 'bar',
+        data: {
+            labels: {{ dias_vendas| safe }},
+        datasets: [{
+            label: 'Valor vendido',
+            data: {{ valores_vendas| safe }},
+        borderWidth: 1
+        }]
+    },
+        options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+</script>
+{% endblock scripts %}

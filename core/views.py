@@ -130,12 +130,19 @@ def offline_view(request):
 # #######################################################################
 @login_required(login_url='/')
 def dashboard_view(request):
-    num_produtos_estoque_baixo = Produto.objects.filter(user=request.user, estoque__quantidade__lt=5).count()
-    total_vendas = Venda.objects.filter(user=request.user).count()
+
+    vendas = Venda.objects.filter(user=request.user)
+
+    num_produtos_estoque_baixo = Produto.objects.filter(
+        user=request.user,
+        estoque__quantidade__lt=5
+    ).count()
+
+    total_vendas = vendas.count()
 
     now = timezone.now()
 
-    # vendas do mês atual
+    # vendas do mês
     inicio_mes = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
     if now.month == 12:
@@ -143,32 +150,57 @@ def dashboard_view(request):
     else:
         proximo_mes = now.replace(month=now.month + 1, day=1)
 
-    valor_vendas_no_mes = Venda.objects.filter(
-        user=request.user,
+    valor_vendas_no_mes = vendas.filter(
         data_venda__gte=inicio_mes,
         data_venda__lt=proximo_mes
     ).aggregate(total=Sum('total'))['total'] or 0
 
-    # vendas de hoje
+    # vendas hoje
     inicio_hoje = now.replace(hour=0, minute=0, second=0, microsecond=0)
     fim_hoje = inicio_hoje + timedelta(days=1)
 
-    valor_vendas_hoje = Venda.objects.filter(
-        user=request.user,
+    valor_vendas_hoje = vendas.filter(
         data_venda__gte=inicio_hoje,
         data_venda__lt=fim_hoje
     ).aggregate(total=Sum('total'))['total'] or 0
 
     # ultimas vendas
-    ultimas_vendas = Venda.objects.filter(user=request.user).order_by('-data_venda')[:5]
+    ultimas_vendas = vendas.order_by('-data_venda')[:5]
+
+    # vendas com desconto
+    vendas_com_desconto = vendas.filter(desconto__gt=0).count()
+
+    # vendas sem desconto
+    vendas_sem_desconto = vendas.filter(desconto=0).count()
+
+    # vendas últimos 7 dias
+    dias_vendas = []
+    valores_vendas = []
+
+    for i in range(6, -1, -1):
+        dia = now.date() - timedelta(days=i)
+
+        total = vendas.filter(
+            data_venda__date=dia
+        ).aggregate(total=Sum('total'))['total'] or 0
+
+        dias_vendas.append(dia.strftime("%d/%m"))
+        valores_vendas.append(float(total))
 
     context = {
         'num_produtos_estoque_baixo': num_produtos_estoque_baixo,
         'total_vendas': total_vendas,
         'valor_vendas_no_mes': valor_vendas_no_mes,
         'valor_vendas_hoje': valor_vendas_hoje,
-        'ultimas_vendas': ultimas_vendas
+        'ultimas_vendas': ultimas_vendas,
+
+        # graficos
+        'vendas_com_desconto': vendas_com_desconto,
+        'vendas_sem_desconto': vendas_sem_desconto,
+        'dias_vendas': dias_vendas,
+        'valores_vendas': valores_vendas,
     }
+
     return render(request, "dashboard/dashboard.html", context)
 
 
