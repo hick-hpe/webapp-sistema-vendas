@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
 Dashboard
@@ -57,7 +58,11 @@ Dashboard
         <div class="card shadow-sm">
             <div class="card-body">
                 <h6 class="text-muted">Descontos nas Vendas</h6>
-                <canvas id="graficoDesconto"></canvas>
+
+                <canvas id="graficoDesconto" data-com-desconto="{{ vendas_com_desconto }}"
+                    data-sem-desconto="{{ vendas_sem_desconto }}">
+                </canvas>
+
             </div>
         </div>
     </div>
@@ -66,7 +71,11 @@ Dashboard
         <div class="card shadow-sm">
             <div class="card-body">
                 <h6 class="text-muted">Vendas últimos 7 dias</h6>
-                <canvas id="graficoVendas"></canvas>
+
+                <canvas id="graficoVendas" data-labels='{{ dias_vendas|safe }}'
+                    data-valores='{{ valores_vendas|safe }}'>
+                </canvas>
+
             </div>
         </div>
     </div>
@@ -109,42 +118,5 @@ Dashboard
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script>
-
-    const ctxDesconto = document.getElementById('graficoDesconto');
-
-    new Chart(ctxDesconto, {
-        type: 'pie',
-        data: {
-            labels: ['Com desconto', 'Sem desconto'],
-            datasets: [{
-                data: [{{ vendas_com_desconto }}, {{ vendas_sem_desconto }}],
-        backgroundColor: ['#ff6384', '#36a2eb']
-    }]
-    }
-});
-
-
-    const ctxVendas = document.getElementById('graficoVendas');
-
-    new Chart(ctxVendas, {
-        type: 'bar',
-        data: {
-            labels: {{ dias_vendas| safe }},
-        datasets: [{
-            label: 'Valor vendido',
-            data: {{ valores_vendas| safe }},
-        borderWidth: 1
-        }]
-    },
-        options: {
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-});
-
-</script>
+<script src="{% static 'js/graficosDashboard.js' %}"></script>
 {% endblock scripts %}

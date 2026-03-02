@@ -197,8 +197,8 @@ def dashboard_view(request):
         # graficos
         'vendas_com_desconto': vendas_com_desconto,
         'vendas_sem_desconto': vendas_sem_desconto,
-        'dias_vendas': dias_vendas,
-        'valores_vendas': valores_vendas,
+        'dias_vendas': json.dumps(dias_vendas),
+        'valores_vendas': json.dumps(valores_vendas),
     }
 
     return render(request, "dashboard/dashboard.html", context)
