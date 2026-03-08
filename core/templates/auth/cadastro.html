@@ -23,11 +23,17 @@
         </div>
 
         {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-danger">
-                    {{ message }}
-                </div>
-            {% endfor %}
+        {% for message in messages %}
+        <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
+
+            <div class="ms-1">
+                {{ message }}
+            </div>
+
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+
+        </div>
+        {% endfor %}
         {% endif %}
 
         <form method="post">
@@ -46,7 +52,8 @@
             </div>
 
             <div class="mb-3">
-                <input type="password" name="confirmar_senha" class="form-control" placeholder="Confirmar senha" required>
+                <input type="password" name="confirmar_senha" class="form-control" placeholder="Confirmar senha"
+                    required>
             </div>
 
             <button class="btn btn-dark w-100">Cadastrar</button>
