@@ -74,6 +74,11 @@ def cadastro_view(request):
             messages.error(request, "Email já cadastrado.")
             return render(request, "auth/cadastro.html")
 
+        # verificar se nome de usuário já existe
+        if User.objects.filter(username=nome).exists():
+            messages.error(request, "Nome de usuário já cadastrado.")
+            return render(request, "auth/cadastro.html")
+        
         # criar usuário
         user = User.objects.create_user(
             username=nome,
