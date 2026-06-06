@@ -72,9 +72,9 @@ HTML5 + CSS3 + JavaScript
     python manage.py runserver
     ```
 
-Abra o navegador em [https://webapp-sistema-vendas.vercel.app/]([http://127.0.0.1:8000/](https://webapp-sistema-vendas.vercel.app/)) para testar.
+Abra o navegador em [https://webapp-sistema-vendas.vercel.app/](https://webapp-sistema-vendas.vercel.app/) para testar.
 
 ## 🌐 Servidor Online
 
 O site está disponível em:  
-[https://palermo.pythonanywhere.com/](https://palermo.pythonanywhere.com/)
+[https://webapp-sistema-vendas.vercel.app/](https://webapp-sistema-vendas.vercel.app/)
