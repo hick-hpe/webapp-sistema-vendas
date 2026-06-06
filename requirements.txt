@@ -1,3 +1,4 @@
 django
 django-pwa
 whitenoise
+reportlab
