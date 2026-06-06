@@ -72,7 +72,7 @@ HTML5 + CSS3 + JavaScript
     python manage.py runserver
     ```
 
-Abra o navegador em [http://127.0.0.1:8000/](http://127.0.0.1:8000/) para testar.
+Abra o navegador em [https://webapp-sistema-vendas.vercel.app/]([http://127.0.0.1:8000/](https://webapp-sistema-vendas.vercel.app/)) para testar.
 
 ## 🌐 Servidor Online
 
