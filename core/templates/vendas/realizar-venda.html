@@ -37,6 +37,7 @@ Realizar Venda
                 </div>
 
                 <button id="btnAdicionar" class="btn btn-dark w-100">
+                    <i class="bi bi-plus-circle"></i>
                     Adicionar Item
                 </button>
 
@@ -114,6 +115,7 @@ Realizar Venda
                 </h4>
 
                 <button id="finalizarVenda" data-url="{% url 'realizar_venda' %}" class="btn btn-success w-100 mt-3">
+                    <i class="bi bi-check-circle"></i>
                     Finalizar Venda
                 </button>
 
@@ -146,7 +148,10 @@ Realizar Venda
 </div>
 
 <div class="mt-2">
-    <a href="{% url 'vendas' %}" class="btn btn-secondary">Voltar</a>
+    <a href="{% url 'vendas' %}" class="btn btn-secondary">
+        <i class="bi bi-chevron-left"></i>
+        Voltar
+    </a>
 </div>
 
 {% endblock content %}

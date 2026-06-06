@@ -39,12 +39,14 @@ Compras Fiado
 
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-secondary w-100">
+                        <i class="bi bi-funnel"></i>
                         Filtrar
                     </button>
                 </div>
 
                 <div class="col-md-2">
                     <a href="{% url 'vendas_fiado' %}" class="btn btn-outline-dark w-100">
+                        <i class="bi bi-x-circle"></i>
                         Limpar
                     </a>
                 </div>
@@ -95,6 +97,7 @@ Compras Fiado
                         <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#pagarVendaFiado"
                             data-id="{{ venda_fiado.id }}">
                             <i class="bi bi-cash"></i>
+                            Pagar
                         </button>
 
                         <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detalhesVendaFiado"
@@ -108,12 +111,14 @@ Compras Fiado
                             data-venda-status="{{ venda_fiado.status }}"
                             data-venda-produtos="{% for item in venda_fiado.venda.itens.all %}{{ item.produto.nome }} - {{ item.quantidade }}x{% if not forloop.last %}, {% endif %}{% endfor %}">
                             <i class="bi bi-eye"></i>
+                            Visualizar
                         </button>
 
                         <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#excluirVendaFiado"
                             data-id="{{ venda_fiado.id }}"
                             data-nome="#{{ venda_fiado.venda.id }} - {{ venda_fiado.venda.descricao|default:'Sem descrição' }}">
                             <i class="bi bi-trash"></i>
+                            Excluir
                         </button>
                     </td>
                 </tr>
@@ -128,9 +133,8 @@ Compras Fiado
 </div>
 
 <!-- Modal Pagar -->
-<div class="modal fade" id="pagarVendaFiado" tabindex="-1" aria-labelledby="pagarVendaFiadoLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade" id="pagarVendaFiado" tabindex="-1" aria-labelledby="pagarVendaFiadoLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="pagarVendaFiadoLabel">Detalhes da Venda Fiada</h5>
@@ -145,7 +149,10 @@ Compras Fiado
                         <input type="number" step="0.01" min="0" class="form-control" id="valor_pago" name="valor_pago"
                             placeholder="Ex: 100.00" required>
                     </div>
-                    <button type="submit" class="btn btn-success w-100">Registrar Pagamento</button>
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="bi bi-check-circle"></i>
+                        Registrar Pagamento
+                    </button>
                 </form>
             </div>
         </div>
@@ -162,15 +169,102 @@ Compras Fiado
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p><strong>ID:</strong> <span id="vendaFiadoId"></span></p>
-                <p><strong>Cliente:</strong> <span id="vendaFiadoCliente"></span></p>
-                <p><strong>Descrição:</strong> <span id="vendaFiadoDescricao"></span></p>
-                <p><strong>Data:</strong> <span id="vendaFiadoData"></span></p>
-                <p><strong>Total:</strong> R$ <span id="vendaFiadoTotal"></span></p>
-                <p><strong>Total Pago:</strong> R$ <span id="vendaFiadoTotalPago"></span></p>
-                <p><strong>Total Pendente:</strong> R$ <span id="vendaFiadoTotalPendente"></span></p>
-                <p><strong>Status:</strong> <span id="vendaFiadoStatus"></span></p>
-                <p><strong>Produtos:</strong> <span id="vendaFiadoProdutos"></span></p>
+
+                <!-- Informações -->
+                <div class="card border-0 bg-light mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="bi bi-receipt"></i>
+                            Informações da Venda
+                        </h6>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <small class="text-muted">ID</small>
+                                <div id="vendaFiadoId"></div>
+                            </div>
+
+                            <div class="col-6">
+                                <small class="text-muted">Data</small>
+                                <div id="vendaFiadoData"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cliente -->
+                <div class="card border-0 bg-light mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="bi bi-person"></i>
+                            Cliente
+                        </h6>
+
+                        <div id="vendaFiadoCliente"></div>
+                    </div>
+                </div>
+
+                <!-- Produtos -->
+                <div class="card border-0 bg-light mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="bi bi-box"></i>
+                            Produtos
+                        </h6>
+
+                        <div id="vendaFiadoProdutos"></div>
+                    </div>
+                </div>
+
+                <!-- Descrição -->
+                <div class="card border-0 bg-light mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="bi bi-card-text"></i>
+                            Descrição
+                        </h6>
+
+                        <div id="vendaFiadoDescricao"></div>
+                    </div>
+                </div>
+
+                <!-- Resumo Financeiro -->
+                <h6 class="mb-3">
+                    <i class="bi bi-cash-stack"></i>
+                    Resumo Financeiro
+                </h6>
+
+                <div class="row text-center g-2">
+
+                    <div class="col-md-4">
+                        <div class="border rounded p-3">
+                            <small class="text-muted">Total</small>
+                            <h5 class="mb-0 text-primary">
+                                R$ <span id="vendaFiadoTotal"></span>
+                            </h5>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="border rounded p-3">
+                            <small class="text-muted">Pago</small>
+                            <h5 class="mb-0 text-success">
+                                R$ <span id="vendaFiadoTotalPago"></span>
+                            </h5>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="border rounded p-3">
+                            <small class="text-muted">Pendente</small>
+                            <h5 class="mb-0 text-danger">
+                                R$ <span id="vendaFiadoTotalPendente"></span>
+                            </h5>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
@@ -192,10 +286,16 @@ Compras Fiado
                 <p>Tem certeza que deseja excluir a venda fiada <strong id="vendaFiadoNome"></strong>?</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i>
+                    Cancelar
+                </button>
                 <form method="post" id="excluirVendaFiadoForm">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">Excluir</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i>
+                        Excluir
+                    </button>
                 </form>
             </div>
         </div>

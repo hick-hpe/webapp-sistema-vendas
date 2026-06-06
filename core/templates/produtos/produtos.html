@@ -51,12 +51,14 @@ Produtos
                 <!-- Botão -->
                 <div class="col-md-3">
                     <button type="submit" class="btn btn-secondary w-100">
+                        <i class="bi bi-funnel"></i>
                         Filtrar
                     </button>
                 </div>
 
                 <div class="col-md-2">
                     <a href="{% url 'produtos' %}" class="btn btn-outline-dark w-100">
+                        <i class="bi bi-x-circle"></i>
                         Limpar
                     </a>
                 </div>
@@ -97,10 +99,12 @@ Produtos
                     <td class="text-end d-flex justify-content-end gap-1">
                         <a href="{% url 'produtos_editar' produto.id %}" class="btn btn-sm btn-warning">
                             <i class="bi bi-pencil"></i>
+                            Editar
                         </a>
                         <a href="#excluirProduto" class="btn btn-sm btn-danger" data-bs-toggle="modal"
                             data-bs-target="#excluirProduto" data-id="{{ produto.id }}" data-nome="{{ produto.nome }}">
                             <i class="bi bi-trash"></i>
+                            Excluir
                         </a>
                     </td>
                 </tr>
@@ -126,27 +130,23 @@ Produtos
                 {% csrf_token %}
                 <div class="modal-body">
 
-                    <div class="mb-3">
-                        {{ form.nome }}
-                    </div>
-
-                    <div class="mb-3">
-                        {{ form.categoria }}
-                    </div>
-
-                    <div class="mb-3">
-                        {{ form.preco }}
-                    </div>
-
-                    <div class="mb-3">
-                        {{ form.estoque }}
-                    </div>
+                    {% for field in form %}
+                        <div class="mb-3">
+                            {{ field }}
+                        </div>
+                    {% endfor %}
 
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    <button type="submit" class="btn btn-primary">Salvar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle-fill"></i>
+                        Fechar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-floppy"></i>
+                        Salvar
+                    </button>
                 </div>
             </form>
 
@@ -167,10 +167,16 @@ Produtos
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i>
+                    Cancelar
+                </button>
                 <form id="formExcluirProduto" method="POST" action="">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">Excluir</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i>
+                        Excluir
+                    </button>
                 </form>
             </div>
 
@@ -182,4 +188,17 @@ Produtos
 
 {% block scripts %}
 <script src="{% static 'js/excluirProduto.js' %}"></script>
+<script>
+    // desabilitar a opcao default do select
+    document.addEventListener('DOMContentLoaded', () => {
+        const selectCategoria = document.querySelector('select#id_categoria');
+        if (selectCategoria) {
+            const defaultOption = selectCategoria.querySelector('option[value=""]');
+            if (defaultOption) {
+                defaultOption.disabled = true;
+                defaultOption.selected = true;
+            }
+        }
+    });
+</script>
 {% endblock scripts %}

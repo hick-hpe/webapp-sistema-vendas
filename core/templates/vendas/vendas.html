@@ -21,32 +21,24 @@ Vendas
             <div class="row g-3">
 
                 <div class="col-md-4">
-                    <input 
-                        type="text"
-                        name="buscar"
-                        value="{{ request.GET.buscar }}"
-                        class="form-control"
-                        placeholder="Buscar por cliente, descrição ou ID..."
-                    >
+                    <input type="text" name="buscar" value="{{ request.GET.buscar }}" class="form-control"
+                        placeholder="Buscar por cliente, descrição ou ID...">
                 </div>
 
                 <div class="col-md-3">
-                    <input 
-                        type="date"
-                        name="data"
-                        value="{{ request.GET.data }}"
-                        class="form-control"
-                    >
+                    <input type="date" name="data" value="{{ request.GET.data }}" class="form-control">
                 </div>
 
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-secondary w-100">
+                        <i class="bi bi-funnel"></i>
                         Filtrar
                     </button>
                 </div>
 
                 <div class="col-md-2">
                     <a href="{% url 'vendas' %}" class="btn btn-outline-dark w-100">
+                        <i class="bi bi-x-circle"></i>
                         Limpar
                     </a>
                 </div>
@@ -81,20 +73,20 @@ Vendas
                     <td>{{ venda.get_forma_pagamento_display }}</td>
                     <td class="text-end d-flex justify-content-end gap-1">
                         <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detalhesVenda"
-                            data-venda-id="{{ venda.id }}"
-                            data-venda-cliente="{{ venda.cliente }}"
+                            data-venda-id="{{ venda.id }}" data-venda-cliente="{{ venda.cliente }}"
                             data-venda-descricao="{{ venda.descricao|default:'---' }}"
                             data-venda-data="{{ venda.data_venda|date:'d/m/Y - H:i' }}"
-                            data-venda-total="{{ venda.total }}" data-venda-produtos="{% for item in venda.itens.all %}{{ item.produto.nome }} - {{ item.quantidade }}x{% if not forloop.last %}, {% endif %}{% endfor %}"
+                            data-venda-total="{{ venda.total }}"
+                            data-venda-produtos="{% for item in venda.itens.all %}{{ item.produto.nome }} - {{ item.quantidade }}x{% if not forloop.last %}, {% endif %}{% endfor %}"
                             data-forma-pagamento="{{ venda.get_forma_pagamento_display }}"
-                            data-venda-desconto="{{ venda.desconto }}"
-                            >
+                            data-venda-desconto="{{ venda.desconto }}">
                             <i class="bi bi-eye"></i>
+                            Visualizar
                         </button>
                         <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#excluirVenda"
-                            data-id="{{ venda.id }}"
-                            data-nome="#{{ venda.id }} - {{ venda.descricao|default:'---' }}">
+                            data-id="{{ venda.id }}" data-nome="#{{ venda.id }} - {{ venda.descricao|default:'---' }}">
                             <i class="bi bi-trash"></i>
+                            Excluir
                         </button>
                     </td>
                 </tr>
@@ -116,14 +108,88 @@ Vendas
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p><strong>ID:</strong> <span id="modalVendaId"></span></p>
-                <p><strong>Cliente:</strong> <span id="modalVendaCliente"></span></p>
-                <p><strong>Descrição:</strong> <span id="modalVendaDescricao"></span></p>
-                <p><strong>Data:</strong> <span id="modalVendaData"></span></p>
-                <p><strong>Total:</strong> R$ <span id="modalVendaTotal"></span></p>
-                <p><strong>Desconto:</strong> R$ <span id="modalVendaDesconto"></span></p>
-                <p><strong>Pagamento:</strong> <span id="modalVendaFormaPagamento"></span></p>
-                <p><strong>Produtos:</strong> <span id="modalVendaProdutos"></span></p>
+
+                <div class="card border-0 bg-light mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="bi bi-receipt"></i>
+                            Informações da Venda
+                        </h6>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <small class="text-muted">ID</small>
+                                <div id="modalVendaId"></div>
+                            </div>
+
+                            <div class="col-6">
+                                <small class="text-muted">Data</small>
+                                <div id="modalVendaData"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 bg-light mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="bi bi-person"></i>
+                            Cliente
+                        </h6>
+
+                        <div id="modalVendaCliente"></div>
+                    </div>
+                </div>
+
+                <div class="card border-0 bg-light mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="bi bi-box"></i>
+                            Produtos
+                        </h6>
+
+                        <div id="modalVendaProdutos"></div>
+                    </div>
+                </div>
+
+                <div class="card border-0 bg-light mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="bi bi-card-text"></i>
+                            Descrição
+                        </h6>
+
+                        <div id="modalVendaDescricao"></div>
+                    </div>
+                </div>
+
+                <div class="row text-center">
+                    <div class="col">
+                        <div class="border rounded p-2">
+                            <small class="text-muted">Total</small>
+                            <h5 class="text-success mb-0">
+                                R$ <span id="modalVendaTotal"></span>
+                            </h5>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="border rounded p-2">
+                            <small class="text-muted">Desconto</small>
+                            <h5 class="text-warning mb-0">
+                                R$ <span id="modalVendaDesconto"></span>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <small class="text-muted">Forma de pagamento</small>
+                    <div>
+                        <span class="badge text-bg-primary" id="modalVendaFormaPagamento"></span>
+                    </div>
+                </div>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
@@ -145,10 +211,16 @@ Vendas
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i>
+                    Cancelar
+                </button>
                 <form id="formExcluirVenda" method="POST" action="">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">Excluir</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i>
+                        Excluir
+                    </button>
                 </form>
             </div>
 

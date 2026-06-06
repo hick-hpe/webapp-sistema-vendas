@@ -13,8 +13,9 @@ class Categoria(models.Model):
 class Produto(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     nome = models.CharField(max_length=100)
-    categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True, blank=True)
+    categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True)
     preco = models.DecimalField(max_digits=10, decimal_places=2)
+    estoque_minimo = models.PositiveIntegerField(default=5)
 
     def __str__(self):
         return f'{self.nome} - R$ {self.preco}'
@@ -29,7 +30,9 @@ class Estoque(models.Model):
 
     @property
     def status(self):
-        if self.quantidade <= 5:
+        if self.quantidade == 0:
+            return "Esgotado"
+        elif self.quantidade <= self.produto.estoque_minimo:
             return "Baixo"
         return "Normal"
     
@@ -68,7 +71,7 @@ class VendaFiada(models.Model):
         ("parcial", "Parcial"),
         ("pago", "Pago"),
     ]
-    venda = models.OneToOneField(Venda, on_delete=models.CASCADE)
+    venda = models.OneToOneField(Venda, related_name='fiadas', on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pendente")
     total_pago = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 

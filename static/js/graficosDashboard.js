@@ -4,14 +4,15 @@ const ctxDesconto = document.getElementById("graficoDesconto");
 
 const comDesconto = Number(ctxDesconto.dataset.comDesconto);
 const semDesconto = Number(ctxDesconto.dataset.semDesconto);
+const fiado = Number(ctxDesconto.dataset.fiado);
 
 new Chart(ctxDesconto, {
     type: "pie",
     data: {
-        labels: ["Com desconto", "Sem desconto"],
+        labels: ["Com desconto", "Sem desconto", "Fiado"],
         datasets: [{
-            data: [comDesconto, semDesconto],
-            backgroundColor: ["#ff6384", "#36a2eb"]
+            data: [comDesconto, semDesconto, fiado],
+            backgroundColor: ["#FFC107", "#0D6EFD", "#DC3545"]
         }]
     }
 });

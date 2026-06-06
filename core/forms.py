@@ -20,17 +20,27 @@ class ProdutoForm(forms.ModelForm):
         })
     )
 
+    estoque_minimo = forms.IntegerField(
+        label="Estoque mínimo",
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Estoque mínimo',
+            'min': '0'
+        })
+    )
+
     class Meta:
         model = Produto
-        fields = ['nome', 'categoria', 'preco']
+        fields = ['nome', 'categoria', 'preco', 'estoque_minimo']
         widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome do produto'}),
             'categoria': forms.Select(attrs={'class': 'form-select'}),
-            'preco': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'placeholder': 'Preço do produto', 'min': '0'})
+            'preco': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'placeholder': 'Preço do produto', 'min': '0'}),
+            'estoque_minimo': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Estoque mínimo', 'min': '0'})
         }
 
     def __init__(self, user, *args, **kwargs):
-        super(ProdutoForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['categoria'].queryset = Categoria.objects.filter(user=user)
         self.fields['categoria'].empty_label = "Escolha uma categoria"
 

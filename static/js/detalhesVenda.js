@@ -1,6 +1,6 @@
 const detalhesModal = document.getElementById('detalhesVenda');
 
-detalhesModal.addEventListener('show.bs.modal', function (event) {
+detalhesModal.addEventListener('show.bs.modal', (event) => {
 
     const button = event.relatedTarget;
 
@@ -12,6 +12,27 @@ detalhesModal.addEventListener('show.bs.modal', function (event) {
     const desconto = button.getAttribute('data-venda-desconto');
     const formaPagamento = button.getAttribute('data-forma-pagamento');
     const produtos = button.getAttribute('data-venda-produtos');
+
+    const badge = document.getElementById('modalVendaFormaPagamento');
+
+    badge.className = 'badge';
+
+    switch (formaPagamento) {
+        case 'Pix':
+            badge.classList.add('text-bg-success');
+            break;
+
+        case 'Dinheiro':
+            badge.classList.add('text-bg-primary');
+            break;
+
+        case 'Cartão':
+            badge.classList.add('text-bg-warning');
+            break;
+
+        default:
+            badge.classList.add('text-bg-secondary');
+    }
 
     document.getElementById('modalVendaId').innerText = id;
     document.getElementById('modalVendaCliente').innerText = (cliente == "None" ? "Não especificado" : cliente);

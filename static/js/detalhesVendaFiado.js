@@ -22,16 +22,4 @@ detalhesModal.addEventListener('show.bs.modal', function (event) {
     document.getElementById('vendaFiadoTotalPago').innerText = totalPago;
     document.getElementById('vendaFiadoTotalPendente').innerText = totalPendente;
     document.getElementById('vendaFiadoProdutos').innerText = produtos;
-
-    // Badge status
-    let statusText = "";
-    if (status === "pendente") {
-        statusText = "Pendente";
-    } else if (status === "parcial") {
-        statusText = "Parcialmente Pago";
-    } else {
-        statusText = "Pago";
-    }
-
-    document.getElementById('vendaFiadoStatus').innerText = statusText;
 });

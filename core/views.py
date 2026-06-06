@@ -189,6 +189,11 @@ def dashboard_view(request):
     # vendas sem desconto
     vendas_sem_desconto = vendas.filter(desconto=0).count()
 
+    # vendas fiadas
+    vendas_fiado = VendaFiada.objects.filter(
+        venda__user=request.user
+    ).select_related('venda').order_by('-venda__data_venda').count()
+
     # vendas últimos 7 dias
     dias_vendas = []
     valores_vendas = []
@@ -213,6 +218,7 @@ def dashboard_view(request):
         # graficos
         'vendas_com_desconto': vendas_com_desconto,
         'vendas_sem_desconto': vendas_sem_desconto,
+        'vendas_fiado': vendas_fiado,
         'dias_vendas': json.dumps(dias_vendas),
         'valores_vendas': json.dumps(valores_vendas),
     }
@@ -299,13 +305,20 @@ def produtos_view(request):
     if request.method == 'POST':
         form = ProdutoForm(request.user, request.POST)
 
+        print('Dados recebidos do formulário:')
+        # extrair nome, categoria, preco, estoque
+        print('Nome:', request.POST.get('nome'))
+        print('Categoria:', request.POST.get('categoria'))
+        print('Preço:', request.POST.get('preco'))
+        print('Estoque:', request.POST.get('estoque'))
+
         if form.is_valid():
             produto = form.save(commit=False)
             produto.user = request.user
             produto.save()
 
             estoque_qtd = request.POST.get('estoque')
-            estoque_obj = Estoque.objects.create(
+            Estoque.objects.create(
                 produto=produto,
                 quantidade=estoque_qtd
             )
@@ -523,7 +536,6 @@ def realizar_venda_view(request):
                 VendaFiada.objects.create(
                     venda=venda_obj,
                     total_pago=0,
-                    total_pendente=total_calculado,
                     status="pendente"
                 )
 
@@ -549,13 +561,14 @@ def vendas_excluir_view(request, id):
     venda = get_object_or_404(Venda, id=id, user=request.user)
 
     if request.method == 'POST':
-        # restaura estoque
-        for item in venda.itens.all():
-            produto = item.produto
-            produto.estoque.quantidade += item.quantidade
-            produto.estoque.save()
+        with transaction.atomic(): 
+            # restaura estoque
+            for item in venda.itens.all():
+                produto = item.produto
+                produto.estoque.quantidade += item.quantidade
+                produto.estoque.save(update_fields=['quantidade'])
 
-        venda.delete()
+            venda.delete()
 
         return redirect('vendas')
     
@@ -673,7 +686,20 @@ def gerar_relatorio_view(request):
 
     # ================= FILTROS =================
 
-    if periodo == 'hoje':
+    if data_inicio and data_fim:
+        primeiro_dia = datetime.strptime(data_inicio, "%Y-%m-%d").date()
+        ultimo_dia = datetime.strptime(data_fim, "%Y-%m-%d").date()
+
+        vendas = vendas.filter(
+            data_venda__range=[
+                datetime.combine(primeiro_dia, time.min),
+                datetime.combine(ultimo_dia, time.max)
+            ]
+        )
+
+        print(f"Gerando relatório para o período: {data_inicio} a {data_fim}. Vendas encontradas: {vendas.count()}")
+    
+    elif periodo == 'hoje':
         inicio = datetime.combine(hoje, time.min)
         fim = datetime.combine(hoje, time.max)
         vendas = vendas.filter(data_venda__range=[inicio, fim])
@@ -712,19 +738,6 @@ def gerar_relatorio_view(request):
 
         print(f"Gerando relatório para este mês: {primeiro_dia} a {ultimo_dia}. Vendas encontradas: {vendas.count()}")
 
-    elif data_inicio and data_fim:
-        primeiro_dia = datetime.strptime(data_inicio, "%Y-%m-%d").date()
-        ultimo_dia = datetime.strptime(data_fim, "%Y-%m-%d").date()
-
-        vendas = vendas.filter(
-            data_venda__range=[
-                datetime.combine(primeiro_dia, time.min),
-                datetime.combine(ultimo_dia, time.max)
-            ]
-        )
-
-        print(f"Gerando relatório para o período: {data_inicio} a {data_fim}. Vendas encontradas: {vendas.count()}")
-
     return gerar_pdf(request, vendas)
 
 
@@ -733,7 +746,6 @@ def gerar_pdf(request, vendas):
     response = HttpResponse(content_type='application/pdf')
     nome = f"relatorio_{request.user.username}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
     tipo_exibicao = "attachment" # "inline" para exibir no navegador, "attachment" para download
-    # tipo_exibicao = "inline" # "inline" para exibir no navegador, "attachment" para download
     response['Content-Disposition'] = f'{tipo_exibicao}; filename="{nome}"'
 
     doc = SimpleDocTemplate(response, pagesize=A4)

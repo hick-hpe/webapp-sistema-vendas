@@ -22,6 +22,7 @@ body {
 
 .sidebar.show {
     transform: translateX(0);
+    /* color: #f34515; */
 }
 
 main {
