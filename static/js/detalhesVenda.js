@@ -10,6 +10,7 @@ detalhesModal.addEventListener('show.bs.modal', (event) => {
     const data = button.getAttribute('data-venda-data');
     const total = button.getAttribute('data-venda-total');
     const desconto = button.getAttribute('data-venda-desconto');
+    const taxa = button.getAttribute('data-venda-taxa');
     const formaPagamento = button.getAttribute('data-forma-pagamento');
     const produtos = button.getAttribute('data-venda-produtos');
 
@@ -40,6 +41,7 @@ detalhesModal.addEventListener('show.bs.modal', (event) => {
     document.getElementById('modalVendaData').innerText = data;
     document.getElementById('modalVendaTotal').innerText = total;
     document.getElementById('modalVendaDesconto').innerText = desconto;
+    document.getElementById('modalVendaTaxa').innerText = taxa;
     document.getElementById('modalVendaFormaPagamento').innerText = formaPagamento;
     document.getElementById('modalVendaProdutos').innerText = produtos;
 });

@@ -1,11 +1,16 @@
 const descontoInput = document.getElementById("desconto");
 descontoInput.addEventListener("input", aplicarDesconto);
 
+const taxaInput = document.getElementById("taxa");
+taxaInput.addEventListener("input", aplicarTaxa);
+
 const btnAdicionar = document.querySelector("#btnAdicionar");
 btnAdicionar.addEventListener("click", adicionarItem);
 
 const fiadoCheck = document.querySelector("#fiadoCheck");
 fiadoCheck.addEventListener("change", toggleFiado);
+
+const subTotalCell = document.getElementById("subTotal");
 
 const finalizarVendaBtn = document.querySelector("#finalizarVenda");
 finalizarVendaBtn.addEventListener("click", finalizarVenda);
@@ -19,6 +24,14 @@ function aplicarDesconto() {
     const totalComDesconto = totalGeral - desconto;
 
     document.getElementById("valorTotal").innerText = totalComDesconto.toFixed(2);
+}
+
+function aplicarTaxa() {
+    const taxa = parseFloat(document.getElementById("taxa").value) || 0;
+
+    const totalComTaxa = totalGeral + taxa;
+
+    document.getElementById("valorTotal").innerText = totalComTaxa.toFixed(2);
 }
 
 function toggleFiado() {
@@ -37,7 +50,7 @@ function adicionarItem() {
 
     const tbody = document.getElementById("listaItens");
 
-    // 🔥 Verifica se já existe
+    // verifica se já existe
     const linhaExistente = tbody.querySelector(`tr[data-produto-id="${produtoId}"]`);
 
     if (linhaExistente) {
@@ -51,10 +64,11 @@ function adicionarItem() {
         qtdCell.innerText = novaQtd;
 
         recalcular();
+
         return;
     }
 
-    // 🔥 Se não existir, cria normal
+    // se não existir, cria normal
     const totalItem = preco * quantidade;
 
     const row = document.createElement("tr");
@@ -89,6 +103,7 @@ function removerItem(btn, valor) {
 
 function atualizarTotal() {
     document.getElementById("valorTotal").innerText = totalGeral.toFixed(2);
+    subTotalCell.innerText = totalGeral.toFixed(2);
 }
 
 function recalcular() {

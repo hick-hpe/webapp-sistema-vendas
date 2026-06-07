@@ -79,7 +79,8 @@ Vendas
                             data-venda-total="{{ venda.total }}"
                             data-venda-produtos="{% for item in venda.itens.all %}{{ item.produto.nome }} - {{ item.quantidade }}x{% if not forloop.last %}, {% endif %}{% endfor %}"
                             data-forma-pagamento="{{ venda.get_forma_pagamento_display }}"
-                            data-venda-desconto="{{ venda.desconto }}">
+                            data-venda-desconto="{{ venda.desconto }}"
+                            data-venda-taxa="{{ venda.taxa }}">
                             <i class="bi bi-eye"></i>
                             Visualizar
                         </button>
@@ -178,6 +179,15 @@ Vendas
                             <small class="text-muted">Desconto</small>
                             <h5 class="text-warning mb-0">
                                 R$ <span id="modalVendaDesconto"></span>
+                            </h5>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="border rounded p-2">
+                            <small class="text-muted">Taxa</small>
+                            <h5 class="text-info mb-0">
+                                R$ <span id="modalVendaTaxa"></span>
                             </h5>
                         </div>
                     </div>

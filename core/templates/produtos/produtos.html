@@ -79,6 +79,7 @@ Produtos
                     <th>Categoria</th>
                     <th>Preço</th>
                     <th>Estoque</th>
+                    <th>Estoque Mínimo</th>
                     <th>Status</th>
                     <th class="text-end">Ações</th>
                 </tr>
@@ -91,7 +92,8 @@ Produtos
                     <td>{{ produto.categoria.nome }}</td>
                     <td>R$ {{ produto.preco }}</td>
                     <td>{{ produto.estoque.quantidade }}</td>
-                    {% if produto.estoque.quantidade > 5 %}
+                    <td>{{ produto.estoque_minimo }}</td>
+                    {% if produto.estoque.quantidade > produto.estoque_minimo %}
                     <td><span class="badge bg-success">{{ produto.estoque.status }}</span></td>
                     {% else %}
                     <td><span class="badge bg-danger">{{ produto.estoque.status }}</span></td>

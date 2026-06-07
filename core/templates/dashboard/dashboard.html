@@ -36,7 +36,7 @@ Dashboard
         <div class="card shadow-sm">
             <div class="card-body">
                 <h6 class="text-muted">Total de Vendas</h6>
-                <h4>{{ total_vendas }}</h4>
+                <h4>{{ num_total_vendas }}</h4>
             </div>
         </div>
     </div>
@@ -59,8 +59,8 @@ Dashboard
             <div class="card-body">
                 <h6 class="text-muted">Descontos nas Vendas</h6>
 
-                <canvas id="graficoDesconto" data-com-desconto="{{ vendas_com_desconto }}"
-                    data-sem-desconto="{{ vendas_sem_desconto }}" data-fiado="{{ vendas_fiado }}">
+                <canvas id="graficoDesconto" data-com-desconto="{{ num_vendas_com_desconto }}"
+                    data-sem-desconto="{{ num_vendas_sem_desconto }}" data-fiado="{{ num_vendas_fiado }}">
                 </canvas>
 
             </div>

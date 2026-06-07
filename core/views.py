@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import json
 from django.http import JsonResponse
-from django.db.models import Q, Sum
+from django.db.models import F, Q, Sum
 from datetime import datetime, time, timedelta, timedelta
 from reportlab.pdfgen import canvas
 from django.http import HttpResponse
@@ -151,10 +151,10 @@ def dashboard_view(request):
 
     num_produtos_estoque_baixo = Produto.objects.filter(
         user=request.user,
-        estoque__quantidade__lt=5
+        estoque__quantidade__lte=F('estoque_minimo')
     ).count()
 
-    total_vendas = vendas.count()
+    num_total_vendas = vendas.count()
 
     now = timezone.now()
 
@@ -184,13 +184,13 @@ def dashboard_view(request):
     ultimas_vendas = vendas.order_by('-data_venda')[:5]
 
     # vendas com desconto
-    vendas_com_desconto = vendas.filter(desconto__gt=0).count()
+    num_vendas_com_desconto = vendas.filter(desconto__gt=0).count()
 
     # vendas sem desconto
-    vendas_sem_desconto = vendas.filter(desconto=0).count()
+    num_vendas_sem_desconto = vendas.filter(desconto=0).count()
 
     # vendas fiadas
-    vendas_fiado = VendaFiada.objects.filter(
+    num_vendas_fiado = VendaFiada.objects.filter(
         venda__user=request.user
     ).select_related('venda').order_by('-venda__data_venda').count()
 
@@ -210,15 +210,15 @@ def dashboard_view(request):
 
     context = {
         'num_produtos_estoque_baixo': num_produtos_estoque_baixo,
-        'total_vendas': total_vendas,
+        'num_total_vendas': num_total_vendas,
         'valor_vendas_no_mes': valor_vendas_no_mes,
         'valor_vendas_hoje': valor_vendas_hoje,
         'ultimas_vendas': ultimas_vendas,
 
         # graficos
-        'vendas_com_desconto': vendas_com_desconto,
-        'vendas_sem_desconto': vendas_sem_desconto,
-        'vendas_fiado': vendas_fiado,
+        'num_vendas_com_desconto': num_vendas_com_desconto,
+        'num_vendas_sem_desconto': num_vendas_sem_desconto,
+        'num_vendas_fiado': num_vendas_fiado,
         'dias_vendas': json.dumps(dias_vendas),
         'valores_vendas': json.dumps(valores_vendas),
     }
@@ -451,10 +451,11 @@ def realizar_venda_view(request):
 
             itens = data.get("itens", [])
             fiado = data.get("fiado", False)
-            cliente = data.get("clienteFiado")
-            descricao = data.get("descricao")
-            forma_pagamento = data.get("formaPagamento")
-            desconto = data.get("desconto")
+            cliente = data.get("clienteFiado", '')
+            descricao = data.get("descricao", '')
+            forma_pagamento = data.get("formaPagamento", 'pix')
+            desconto = data.get("desconto", 0)
+            taxa = data.get("taxa", 0)
 
             if not itens:
                 print("Nenhum item enviado.")
@@ -502,15 +503,18 @@ def realizar_venda_view(request):
                     (produto, quantidade, preco)
                 )
 
+                total_calculado = total_calculado - desconto + taxa
+
             # cria a venda
             venda_obj = Venda.objects.create(
                 cliente=cliente,
-                total=total_calculado-desconto,
+                total=total_calculado,
                 descricao=descricao,
                 user=request.user,
                 data_venda=timezone.now(),
                 forma_pagamento=forma_pagamento,
-                desconto=desconto if desconto > 0 else 0
+                desconto=desconto if desconto > 0 else 0,
+                taxa=taxa if taxa > 0 else 0
             )
 
             # cria itens + baixa estoque
@@ -538,6 +542,14 @@ def realizar_venda_view(request):
                     total_pago=0,
                     status="pendente"
                 )
+            
+            # descricao automatica, caso nao tenha
+            if not descricao:
+                descricao_gerada = ", ".join(
+                    [f"{quantidade}x {produto.nome}" for produto, quantidade, preco in produtos_processados]
+                )
+                venda_obj.descricao = descricao_gerada
+                venda_obj.save(update_fields=['descricao'])
 
             return JsonResponse({"status": "success"})
 

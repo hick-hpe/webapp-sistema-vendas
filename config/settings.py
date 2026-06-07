@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Configurações do banco de dados
 # print(f"Banco: {'postgresql' if os.getenv('DB_ENGINE') else 'sqlite3'}")
-if os.getenv('DB_ENGINE'):
+if not DEBUG:
     # PostegreSQL
     DATABASES = {
         'default': {

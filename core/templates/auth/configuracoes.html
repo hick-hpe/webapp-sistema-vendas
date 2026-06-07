@@ -5,7 +5,13 @@
 
 <div class="container mt-4" style="max-width: 600px;">
 
-    <h3 class="mb-4">Configurações da Conta</h3>
+    <h3 class="mb-4">
+        <!-- tag a voltar -->
+        <a href="{% url 'dashboard' %}" class="text-decoration-none text-dark me-2">
+            <i class="bi bi-chevron-left"></i>
+        </a>
+        Configurações da Conta
+    </h3>
 
     {% if messages %}
     {% for message in messages %}
