@@ -457,6 +457,9 @@ def realizar_venda_view(request):
             desconto = data.get("desconto", 0)
             taxa = data.get("taxa", 0)
 
+            desconto = 0 if desconto < 0 else desconto
+            taxa = 0 if taxa < 0 else taxa
+
             if not itens:
                 print("Nenhum item enviado.")
                 return JsonResponse(

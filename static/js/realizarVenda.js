@@ -19,7 +19,10 @@ let totalGeral = 0;
 let fiado = false;
 
 function aplicarDesconto() {
-    const desconto = parseFloat(document.getElementById("desconto").value) || 0;
+    let desconto = parseFloat(document.getElementById("desconto").value) || 0;
+    if (isNaN(desconto) || desconto < 0) {
+        desconto = 0;
+    }
 
     const totalComDesconto = totalGeral - desconto;
 
@@ -27,7 +30,10 @@ function aplicarDesconto() {
 }
 
 function aplicarTaxa() {
-    const taxa = parseFloat(document.getElementById("taxa").value) || 0;
+    let taxa = parseFloat(document.getElementById("taxa").value) || 0;
+    if (isNaN(taxa) || taxa < 0) {
+        taxa = 0;
+    }
 
     const totalComTaxa = totalGeral + taxa;
 
@@ -139,7 +145,10 @@ function finalizarVenda() {
     const fiado = document.getElementById("fiadoCheck").checked;
     const clienteFiado = document.getElementById("clienteFiado").value;
     const formaPagamento = document.getElementById("forma-pagamento").value;
-    const desconto = Number(document.getElementById("desconto").value);
+    let desconto = Number(document.getElementById("desconto").value);
+    if (isNaN(desconto) || desconto < 0) {
+        desconto = 0;
+    }
 
     const descricao = document.getElementById("descricaoVenda").value;
     const dados = {
@@ -150,8 +159,6 @@ function finalizarVenda() {
         desconto: desconto,
         formaPagamento: formaPagamento
     };
-
-    console.log(dados);
 
     const csrftoken = getCookie('csrftoken');
     const URL_VENDA = finalizarVendaBtn.dataset.url;

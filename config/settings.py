@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-@xxm9_kdc4we1$!cv4_v5z2r25sbt7g#0d4^ajoc!hr&ub5xd#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('ENV', 'dev') == 'dev'  # Define DEBUG com base na variável de ambiente ENV
 
 # testes
 ALLOWED_HOSTS = [
@@ -85,7 +85,6 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 # Configurações do banco de dados
-# print(f"Banco: {'postgresql' if os.getenv('DB_ENGINE') else 'sqlite3'}")
 if not DEBUG:
     # PostegreSQL
     DATABASES = {
@@ -96,9 +95,9 @@ if not DEBUG:
             'PASSWORD': os.getenv('PGPASSWORD'),
             'HOST': os.getenv('PGHOST'),
             'PORT': os.getenv('DB_PORT'),
-            # 'OPTIONS': {
-            # 'sslmode': 'require',
-            # },
+            'OPTIONS': {
+            'sslmode': 'require',
+            },
         }
     }
 else:
