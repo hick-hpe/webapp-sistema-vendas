@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 # Configurações do banco de dados
-print(f"Banco: {'postgresql' if os.getenv('DB_ENGINE') else 'sqlite3'}")
+# print(f"Banco: {'postgresql' if os.getenv('DB_ENGINE') else 'sqlite3'}")
 if os.getenv('DB_ENGINE'):
     # PostegreSQL
     DATABASES = {
