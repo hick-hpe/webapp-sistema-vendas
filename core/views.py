@@ -2,8 +2,8 @@ from decimal import Decimal, InvalidOperation
 from django.utils import timezone
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import CategoriaForm, ProdutoForm
-from .models import Categoria, Estoque, Produto, Venda, ItemVenda, VendaFiada
+from .forms import CategoriaForm, OrganizacaoForm, ProdutoForm
+from .models import Categoria, Estoque, Organizacao, Produto, Venda, ItemVenda, VendaFiada
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -49,7 +49,7 @@ def login_view(request):
         # autenticação
         user = authenticate(request, username=username, password=senha)
         if user is not None:
-            login(request, user)
+            login(request, user)           
             return redirect('dashboard')
         else:
             messages.error(request, 'Email ou senha inválidos.')
@@ -901,3 +901,29 @@ def gerar_pdf(request, vendas):
     doc.build(elementos)
 
     return response
+
+
+def organizacoes_view(request):
+    organizacao = get_object_or_404(Organizacao, dono=request.user)
+
+    if request.method == 'POST':
+        form = OrganizacaoForm(request.POST, instance=organizacao)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Organização atualizada com sucesso.")
+            return redirect('organizacoes')
+
+        else:
+            print("Erro ao atualizar organização:", form.errors)
+            messages.error(request, "Erro ao atualizar organização. Verifique os dados e tente novamente.")
+
+
+    form = OrganizacaoForm(instance=organizacao)
+
+    context = {
+        "form": form,
+        "organizacao": organizacao
+    }
+
+    return render(request, "organizacoes/organizacoes.html", context)
+

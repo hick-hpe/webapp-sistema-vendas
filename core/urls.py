@@ -37,4 +37,7 @@ urlpatterns = [
     # relatorios
     path('relatorios/', views.relatorios_view, name='relatorios'),
     path('gerar-relatorio/', views.gerar_relatorio_view, name='gerar_relatorio'),
+
+    # organizacoes
+    # path('organizacoes/', views.organizacoes_view, name='organizacoes'),
 ]

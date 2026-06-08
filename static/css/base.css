@@ -31,6 +31,10 @@ main {
     overflow-x: hidden;
 }
 
+textarea {
+    resize: none;
+}
+
 @media (min-width: 768px) {
     .sidebar {
         position: relative;
