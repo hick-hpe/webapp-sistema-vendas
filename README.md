@@ -25,6 +25,92 @@ Ideal para pequenos comércios ou uso pessoal.
 - 🌐 Página offline (`offline.html`)
 - 🔐 Sistema de autenticação de usuários
 
+## Funcionalidades futuras
+
+### 📦 Fornecedor
+Permite registrar de quem você compra os produtos. Exemplo:
+- Distribuidora ABC
+- Mercado Atacado XYZ
+
+> Saber quem fornece cada produto.
+
+
+### 💰 Preço de custo
+Valor que você pagou pelo produto.
+
+| Produto   | Custo   | Venda    |
+| --------- | ------- | -------- |
+| Coca-Cola | R$ 6,00 | R$ 10,00 |
+
+> Saber quanto realmente lucra.
+
+
+### 🛒 Registro de compras
+Cadastro das compras feitas aos fornecedores.
+
+```
+Fornecedor: ABC
+
+10 Coca-Cola
+20 Fanta
+
+Total: R$ 300
+```
+
+> Histórico de reposições e gastos.
+
+
+### 📥 Entrada automática no estoque
+Quando uma compra é registrada, o estoque aumenta sozinho.
+
+```
+Èstoque atual:
+Coca-Cola: 5
+
+Compra:
++20 Coca-Cola
+
+Novo estoque:
+25
+```
+
+> Evita atualizar estoque manualmente.
+
+
+### 📊 Relatórios de lucro
+Mostra quanto foi vendido e quanto foi lucrado.
+
+```
+Receita: R$ 5.000
+Custos:  R$ 3.000
+
+Lucro:   R$ 2.000
+```
+
+> Saber se o negócio está realmente dando retorno.
+
+
+### 🔔 Alertas de reposição
+Verifica produtos abaixo do estoque mínimo.
+
+```
+Coca-Cola
+Estoque atual: 2
+Mínimo: 5
+```
+
+Exibe um alerta no dashboard.
+
+> Evitar ficar sem produtos para vender.
+
+### Prioridade
+- Fornecedor
+- Preço de custo
+- Alertas de reposição
+<!-- - Registro de compras
+- Entrada automática no estoque
+- Relatórios de lucro -->
+
 ## 🛠️ Tecnologias Utilizadas
 - Django
 - Bootstrap 5

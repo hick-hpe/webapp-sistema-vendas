@@ -10,11 +10,24 @@ class Categoria(models.Model):
         return self.nome
 
 
+class Fornecedor(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    nome = models.CharField(max_length=100)
+    telefone = models.CharField(max_length=20, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+    endereco = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.nome
+    
+
 class Produto(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     nome = models.CharField(max_length=100)
     descricao = models.TextField(max_length=500, blank=True, null=True)
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True)
+    fornecedor = models.ForeignKey(Fornecedor, on_delete=models.SET_NULL, null=True)
     preco = models.DecimalField(max_digits=10, decimal_places=2)
     estoque_minimo = models.PositiveIntegerField(default=5)
 
@@ -85,12 +98,14 @@ class VendaFiada(models.Model):
         return f'Venda Fiada #{self.venda.id} - Status: {self.status}'
     
 
-class Organizacao(models.Model):
-    dono = models.ForeignKey(User, on_delete=models.CASCADE)
-    nome = models.CharField(max_length=100)
-    descricao = models.TextField(max_length=500, blank=True, null=True)
-    membros = models.ManyToManyField(User, related_name='organizacoes', null=True, blank=True)
 
-    def __str__(self):
-        return f'Organização: {self.nome} - Dono: {self.dono.username}'
+# futuramente...
+# class Organizacao(models.Model):
+#     dono = models.ForeignKey(User, on_delete=models.CASCADE)
+#     nome = models.CharField(max_length=100)
+#     descricao = models.TextField(max_length=500, blank=True, null=True)
+#     membros = models.ManyToManyField(User, related_name='organizacoes', null=True, blank=True)
+
+#     def __str__(self):
+#         return f'Organização: {self.nome} - Dono: {self.dono.username}'
     

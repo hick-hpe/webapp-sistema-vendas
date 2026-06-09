@@ -902,28 +902,28 @@ def gerar_pdf(request, vendas):
 
     return response
 
+# futuramente...
+# def organizacoes_view(request):
+#     organizacao = get_object_or_404(Organizacao, dono=request.user)
 
-def organizacoes_view(request):
-    organizacao = get_object_or_404(Organizacao, dono=request.user)
+#     if request.method == 'POST':
+#         form = OrganizacaoForm(request.POST, instance=organizacao)
+#         if form.is_valid():
+#             form.save()
+#             messages.success(request, "Organização atualizada com sucesso.")
+#             return redirect('organizacoes')
 
-    if request.method == 'POST':
-        form = OrganizacaoForm(request.POST, instance=organizacao)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Organização atualizada com sucesso.")
-            return redirect('organizacoes')
-
-        else:
-            print("Erro ao atualizar organização:", form.errors)
-            messages.error(request, "Erro ao atualizar organização. Verifique os dados e tente novamente.")
+#         else:
+#             print("Erro ao atualizar organização:", form.errors)
+#             messages.error(request, "Erro ao atualizar organização. Verifique os dados e tente novamente.")
 
 
-    form = OrganizacaoForm(instance=organizacao)
+#     form = OrganizacaoForm(instance=organizacao)
 
-    context = {
-        "form": form,
-        "organizacao": organizacao
-    }
+#     context = {
+#         "form": form,
+#         "organizacao": organizacao
+#     }
 
-    return render(request, "organizacoes/organizacoes.html", context)
+#     return render(request, "organizacoes/organizacoes.html", context)
 

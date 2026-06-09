@@ -45,22 +45,22 @@ class ProdutoForm(forms.ModelForm):
         self.fields['categoria'].queryset = Categoria.objects.filter(user=user)
         self.fields['categoria'].empty_label = "Escolha uma categoria"
 
+# futuramente...
+# class OrganizacaoForm(forms.ModelForm):
+#     nome = forms.CharField(
+#         label="Nome da organização",
+#         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome da organização'})
+#     )
 
-class OrganizacaoForm(forms.ModelForm):
-    nome = forms.CharField(
-        label="Nome da organização",
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome da organização'})
-    )
+#     descricao = forms.CharField(
+#         label="Descrição da organização",
+#         widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Descrição da organização (opcional)', 'rows': 3}),
+#         required=False
+#     )
 
-    descricao = forms.CharField(
-        label="Descrição da organização",
-        widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Descrição da organização (opcional)', 'rows': 3}),
-        required=False
-    )
-
-    class Meta:
-        model = Organizacao
-        fields = ['nome', 'descricao']
+#     class Meta:
+#         model = Organizacao
+#         fields = ['nome', 'descricao']
     
 
 # class VendaForm(forms.Form):
