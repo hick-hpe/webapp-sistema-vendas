@@ -2,15 +2,15 @@ from decimal import Decimal, InvalidOperation
 from django.utils import timezone
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import CategoriaForm, FornecedorForm, ProdutoForm # OrganizacaoForm
-from .models import Categoria, Compra, Estoque, Fornecedor, ItemCompra, Produto, Venda, ItemVenda, VendaFiada # Organizacao
+from .forms import CategoriaForm, FornecedorForm, ProdutoForm
+from .models import Categoria, Compra, Estoque, Fornecedor, ItemCompra, Produto, Venda, ItemVenda, VendaFiada
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import json
 from django.http import JsonResponse
-from django.db.models import F, Q, Sum
+from django.db.models import F, Q, Sum, Count
 from datetime import datetime, time, timedelta, timedelta
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import A4
@@ -158,7 +158,7 @@ def dashboard_view(request):
         proximo_mes = now.replace(year=now.year + 1, month=1, day=1)
     else:
         proximo_mes = now.replace(month=now.month + 1, day=1)
-
+    
     valor_vendas_no_mes = vendas.filter(
         data_venda__gte=inicio_mes,
         data_venda__lt=proximo_mes
@@ -202,9 +202,18 @@ def dashboard_view(request):
         valores_vendas.append(float(total))
 
     # vendas por categorias
-    categorias_vendas = list(Categoria.objects.values_list('nome', flat=True))
-    valores_categorias = len(categorias_vendas) * [3]
+    list_itens_compra = list(
+        ItemVenda.objects.filter(
+            venda__in=vendas,
+        ).values(
+            categoria=F('produto__categoria__nome')
+        ).annotate(
+            num_produtos=Sum('quantidade')
+        )
+    )
 
+    categorias_vendas = list(map(lambda x: x['categoria'], list_itens_compra))
+    valores_categorias = list(map(lambda x: x['num_produtos'], list_itens_compra))
 
     # renderizar no template
     context = {
