@@ -4,7 +4,7 @@ html, body {
 
 body {
     margin: 0;
-    overflow: hidden; /* impede scroll geral */
+    overflow: hidden;
 }
 
 .layout {
@@ -13,6 +13,7 @@ body {
 
 .sidebar {
     position: fixed;
+    width: 100% !important;
     inset: 0;
     background-color: #212529;
     z-index: 1030;
@@ -22,7 +23,6 @@ body {
 
 .sidebar.show {
     transform: translateX(0);
-    /* color: #f34515; */
 }
 
 main {
@@ -37,10 +37,11 @@ textarea {
 
 @media (min-width: 768px) {
     .sidebar {
-        position: relative;
-        transform: translateX(0);
-        width: 250px;
-        height: 100vh;
-        inset: unset;
+        position: relative !important;
+        transform: translateX(0) !important;
+        width: 300px !important; 
+        min-width: 250px !important;
+        height: 100vh !important;
+        inset: unset !important;
     }
 }
