@@ -43,7 +43,6 @@ Categorias
         <table class="table table-hover align-middle">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Nome</th>
                     <th class="text-end">Ações</th>
                 </tr>
@@ -51,7 +50,6 @@ Categorias
             <tbody>
                 {% for categoria in categorias %}
                 <tr>
-                    <td>{{ categoria.id }}</td>
                     <td class="nome-categoria">{{ categoria.nome }}</td>
                     <td class="text-end">
                         <a href="{% url 'categorias_editar' categoria.id %}" class="btn btn-sm btn-warning">

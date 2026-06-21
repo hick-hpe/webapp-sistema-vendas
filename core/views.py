@@ -304,13 +304,15 @@ def produtos_view(request):
         print('Categoria:', request.POST.get('categoria'))
         print('Preço:', request.POST.get('preco_venda'))
         print('Estoque:', request.POST.get('estoque'))
+        print('estoque_minimo:', request.POST.get('estoque_minimo'))
 
         if form.is_valid():
             produto = form.save(commit=False)
             produto.user = request.user
             produto.save()
 
-            estoque_qtd = request.POST.get('estoque')
+
+            estoque_qtd = int(request.POST.get('estoque') or '0')
             Estoque.objects.create(
                 produto=produto,
                 quantidade=estoque_qtd

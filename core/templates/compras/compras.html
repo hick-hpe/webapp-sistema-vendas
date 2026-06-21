@@ -72,7 +72,6 @@ Compras
 
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Fornecedor</th>
                     <th>Data</th>
                     <th>Itens</th>
@@ -86,8 +85,6 @@ Compras
 
                 {% for compra in compras %}
                 <tr>
-
-                    <td>#{{ compra.id }}</td>
 
                     <td>
                         {{ compra.fornecedor.distribuidora }}

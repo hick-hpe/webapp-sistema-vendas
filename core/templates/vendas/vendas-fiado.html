@@ -76,7 +76,6 @@ Compras Fiado
         <table class="table table-hover align-middle">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Cliente</th>
                     <th>Data</th>
                     <th>Pendente</th>
@@ -87,7 +86,6 @@ Compras Fiado
             <tbody>
                 {% for venda_fiado in vendas_fiado %}
                 <tr>
-                    <td>{{ venda_fiado.venda.id }}</td>
                     <td>{{ venda_fiado.venda.cliente|default:"-" }}</td>
                     <td>{{ venda_fiado.venda.data_venda|date:"d/m/Y - H:i" }}</td>
                     <td>R$ {{ venda_fiado.total_pendente|floatformat:2 }}</td>

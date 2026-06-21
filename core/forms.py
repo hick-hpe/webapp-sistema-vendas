@@ -19,7 +19,8 @@ class ProdutoForm(forms.ModelForm):
             'class': 'form-control',
             'placeholder': 'Quantidade em estoque',
             'min': '0'
-        })
+        }),
+        required=False
     )
 
     estoque_minimo = forms.IntegerField(
@@ -28,7 +29,9 @@ class ProdutoForm(forms.ModelForm):
             'class': 'form-control',
             'placeholder': 'Estoque mínimo',
             'min': '0'
-        })
+        }),
+        required=False,
+        initial=5,
     )
 
     preco_venda = forms.DecimalField(
@@ -38,7 +41,8 @@ class ProdutoForm(forms.ModelForm):
             'step': '0.01',
             'placeholder': 'Preço de venda do produto',
             'min': '0'
-        })
+        }),
+        required=False
     )
 
     preco_custo = forms.DecimalField(
@@ -48,7 +52,8 @@ class ProdutoForm(forms.ModelForm):
             'step': '0.01',
             'placeholder': 'Preço de custo do produto',
             'min': '0'
-        })
+        }),
+        required=False
     )
 
     class Meta:
@@ -72,6 +77,33 @@ class ProdutoForm(forms.ModelForm):
 
         if user:
             self.fields['fornecedor'].queryset = Fornecedor.objects.filter(user=user)
+        
+
+    def clean_preco_venda(self):
+        valor = self.cleaned_data.get('preco_venda')
+
+        if valor is None:
+            return 0
+
+        return valor
+    
+    
+    def clean_preco_custo(self):
+        valor = self.cleaned_data.get('preco_custo')
+
+        if valor is None:
+            return 0
+
+        return valor
+    
+    
+    def clean_estoque_minimo(self):
+        valor = self.cleaned_data.get('estoque_minimo')
+
+        if valor is None:
+            return 5
+
+        return valor
 
 class FornecedorForm(forms.ModelForm):
 
@@ -128,23 +160,7 @@ class FornecedorForm(forms.ModelForm):
         fields = ['distribuidora', 'nome', 'telefone', 'email', 'rua', 'numero', 'bairro', 'cidade', 'estado', 'cep', 'site']
 
 
-# futuramente...
-# class OrganizacaoForm(forms.ModelForm):
-#     nome = forms.CharField(
-#         label="Nome da organização",
-#         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome da organização'})
-#     )
-
-#     descricao = forms.CharField(
-#         label="Descrição da organização",
-#         widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Descrição da organização (opcional)', 'rows': 3}),
-#         required=False
-#     )
-
-#     class Meta:
-#         model = Organizacao
-#         fields = ['nome', 'descricao']
-    
+# futuramente...    
 
 # class VendaForm(forms.Form):
 #     cliente = forms.CharField(

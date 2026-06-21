@@ -50,7 +50,4 @@ urlpatterns = [
     path('compras/<int:id>/detalhes/', views.detalhes_compra_view, name='detalhes_compra'),
     path('compras/criar/', views.realizar_compra_view, name='realizar_compra'),
     path('compras/', views.compras_view, name='compras'),
-
-    # organizacoes
-    # path('organizacoes/', views.organizacoes_view, name='organizacoes'),
 ]

@@ -44,9 +44,9 @@ class Produto(models.Model):
         blank=True,
         related_name='produtos'
     )
-    preco_venda = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    preco_custo = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    estoque_minimo = models.PositiveIntegerField(default=5)
+    preco_venda = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    preco_custo = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    estoque_minimo = models.PositiveIntegerField(default=5, blank=True)
 
     @property
     def lucro(self):
@@ -57,7 +57,7 @@ class Produto(models.Model):
     @property
     def margem_lucro(self):
         if self.preco_custo and self.preco_custo > 0:
-            return ((self.preco_venda - self.preco_custo) / self.preco_custo) * 100
+            return (((self.preco_venda or 0) - self.preco_custo) / self.preco_custo) * 100
         return 0
 
     def __str__(self):
@@ -109,7 +109,7 @@ class ItemCompra(models.Model):
         related_name='itens_compra'
     )
 
-    quantidade = models.PositiveIntegerField()
+    quantidade = models.PositiveIntegerField(default=0)
 
     preco_custo = models.DecimalField(
         max_digits=10,
@@ -159,7 +159,7 @@ class Venda(models.Model):
 class ItemVenda(models.Model):
     venda = models.ForeignKey(Venda, on_delete=models.CASCADE, related_name="itens")
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
-    quantidade = models.IntegerField()
+    quantidade = models.IntegerField(default=0)
     total_parcial = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
