@@ -76,14 +76,9 @@ Produtos
                 {% for produto in produtos %}
                 <tr>
                     <td class="nome-produto">{{ produto.nome }}</td>
-                    <td>{{ produto.categoria.nome }}</td>
 
                     <td>R$ {{ produto.preco_custo }}</td>
                     <td>R$ {{ produto.preco_venda }}</td>
-
-                    <!-- <td>
-                        R$ {{ produto.lucro }}
-                    </td> -->
 
                     <td class="text-end d-flex justify-content-end gap-1">
 
