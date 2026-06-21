@@ -208,12 +208,17 @@ def dashboard_view(request):
         ).values(
             categoria=F('produto__categoria__nome')
         ).annotate(
-            num_produtos=Sum('quantidade')
+            num_produtos=Sum('quantidade'),
+            faturamento=Sum('total_parcial')
         )
     )
 
+    # for item in list_itens_compra:
+    #     print(f'{item['categoria']}: {item['num_produtos']} - R$ {(item['faturamento']):.2f}')
+
     categorias_vendas = list(map(lambda x: x['categoria'], list_itens_compra))
     valores_categorias = list(map(lambda x: x['num_produtos'], list_itens_compra))
+    faturamento_categorias = list(map(lambda x: float(x['faturamento']), list_itens_compra))
 
     # renderizar no template
     context = {
@@ -234,9 +239,10 @@ def dashboard_view(request):
         'dias_vendas': json.dumps(dias_vendas),
         'valores_vendas': json.dumps(valores_vendas),
 
-        # vendas por categorias
+        # vendas de produtos por categorias
         'categorias_vendas': json.dumps(categorias_vendas),
         'valores_categorias': json.dumps(valores_categorias),
+        'faturamento_categorias_vendas': json.dumps(faturamento_categorias)
     }
 
     return render(request, "dashboard/dashboard.html", context)
@@ -545,7 +551,7 @@ def realizar_venda_view(request):
                     venda=venda_obj,
                     produto=produto,
                     quantidade=quantidade,
-                    total_parcial=preco
+                    total_parcial=preco*quantidade
                 )
 
                 produto.estoque.quantidade -= quantidade

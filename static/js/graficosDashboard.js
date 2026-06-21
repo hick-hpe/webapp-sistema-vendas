@@ -18,9 +18,36 @@ new Chart(ctxDesconto, {
 });
 
 
-// ===== GRAFICO CATEGORIAS =====
+// ===== GRAFICO PRODUTOS POR CATEGORIAS =====
 
-const ctxVendasPorCategoria = document.getElementById("graficoCategorias");
+const ctxProdutosPorCategorias = document.getElementById("graficoProdutosPorCategorias");
+
+const labelsProdutosPorCategorias = JSON.parse(ctxProdutosPorCategorias.dataset.labels || "[]");
+const valoresProdutosPorCategorias = JSON.parse(ctxProdutosPorCategorias.dataset.valores || "[]");
+
+new Chart(ctxProdutosPorCategorias, {
+    type: "bar",
+    data: {
+        labels: labelsProdutosPorCategorias,
+        datasets: [{
+            label: "Produtos vendidos",
+            data: valoresProdutosPorCategorias,
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+
+// ===== GRAFICO VENDAS POR CATEGORIAS =====
+
+const ctxVendasPorCategoria = document.getElementById("graficoVendasCategoria");
 
 const labelsVendasPorCategoria = JSON.parse(ctxVendasPorCategoria.dataset.labels || "[]");
 const valoresVendasPorCategoria = JSON.parse(ctxVendasPorCategoria.dataset.valores || "[]");
@@ -30,7 +57,7 @@ new Chart(ctxVendasPorCategoria, {
     data: {
         labels: labelsVendasPorCategoria,
         datasets: [{
-            label: "Valor vendido",
+            label: "Valor (R$)",
             data: valoresVendasPorCategoria,
             borderWidth: 1
         }]
@@ -43,6 +70,7 @@ new Chart(ctxVendasPorCategoria, {
         }
     }
 });
+
 
 // ===== GRAFICO VENDAS =====
 

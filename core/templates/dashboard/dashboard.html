@@ -68,15 +68,27 @@ Dashboard
     <div class="col-12 col-lg-6">
         <div class="card shadow-sm h-100">
             <div class="card-body">
-                <h6 class="text-muted">Vendas por Categoria</h6>
-                <canvas id="graficoCategorias" data-labels='{{ categorias_vendas|safe }}'
-                    data-valores='{{ valores_categorias|safe }}'>
+                <h6 class="text-muted">Produtos Vendidos por Categoria</h6>
+                <canvas id="graficoProdutosPorCategorias" data-labels='{{ categorias_vendas|safe }}'
+                    data-valores='{{ faturamento_categorias|safe }}'>
                 </canvas>
             </div>
         </div>
     </div>
 
-    <div class="col-12 col-lg-6 mx-auto">
+    <div class="col-12 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted">Vendas por Categoria</h6>
+                <canvas id="graficoVendasCategoria" data-labels="{{ categorias_vendas }}"
+                    data-valores="{{ faturamento_categorias_vendas }}"
+                    style="max-height: 250px;">
+                </canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-12 col-lg-6">
         <div class="card shadow-sm">
             <div class="card-body">
                 <h6 class="text-muted">Descontos nas Vendas</h6>
