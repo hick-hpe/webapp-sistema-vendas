@@ -30,8 +30,7 @@ class ProdutoForm(forms.ModelForm):
             'placeholder': 'Estoque mínimo',
             'min': '0'
         }),
-        required=False,
-        initial=5,
+        required=False
     )
 
     preco_venda = forms.DecimalField(
@@ -101,7 +100,7 @@ class ProdutoForm(forms.ModelForm):
         valor = self.cleaned_data.get('estoque_minimo')
 
         if valor is None:
-            return 5
+            return 0
 
         return valor
 
