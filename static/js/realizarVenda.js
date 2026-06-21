@@ -182,7 +182,7 @@ function finalizarVenda() {
 
                 document
                     .getElementById('vendaSucessoModal')
-                    .addEventListener('hidden.bs.modal', function () {
+                    .addEventListener('hidden.bs.modal', () => {
                         window.location.href = "/vendas/";
                     });
             } else {

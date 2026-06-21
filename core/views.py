@@ -312,7 +312,7 @@ def produtos_view(request):
             produto.save()
 
 
-            estoque_qtd = int(request.POST.get('estoque') or '0')
+            estoque_qtd = int(request.POST.get('estoque') or '20')
             Estoque.objects.create(
                 produto=produto,
                 quantidade=estoque_qtd

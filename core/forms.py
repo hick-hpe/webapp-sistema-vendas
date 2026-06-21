@@ -100,7 +100,7 @@ class ProdutoForm(forms.ModelForm):
         valor = self.cleaned_data.get('estoque_minimo')
 
         if valor is None:
-            return 0
+            return 10
 
         return valor
 
