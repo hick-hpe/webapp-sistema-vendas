@@ -9,7 +9,7 @@ from django.contrib.auth import login, logout, authenticate, update_session_auth
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import json
-from django.http import HttpResponseNotAllowed, JsonResponse
+from django.http import JsonResponse
 from django.db.models import F, Q, Sum
 from datetime import datetime, time, timedelta, timedelta
 from django.http import HttpResponse
@@ -36,15 +36,8 @@ def erro_500(request):
 # #######################################################################
 def login_view(request):
     if request.method == 'POST':
-        email = request.POST.get('email')
+        username = request.POST.get('username')
         senha = request.POST.get('senha')
-
-        try:
-            usuario_obj = User.objects.get(email=email)
-            username = usuario_obj.username
-        except User.DoesNotExist:
-            messages.error(request, 'Email ou senha inválidos.')
-            return render(request, 'auth/login.html')
 
         # autenticação
         user = authenticate(request, username=username, password=senha)
@@ -52,7 +45,7 @@ def login_view(request):
             login(request, user)           
             return redirect('dashboard')
         else:
-            messages.error(request, 'Email ou senha inválidos.')
+            messages.error(request, 'Username ou senha inválidos.')
 
     return render(request, 'auth/login.html')
 
