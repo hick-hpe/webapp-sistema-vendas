@@ -201,6 +201,12 @@ def dashboard_view(request):
         dias_vendas.append(dia.strftime("%d/%m"))
         valores_vendas.append(float(total))
 
+    # vendas por categorias
+    categorias_vendas = list(Categoria.objects.values_list('nome', flat=True))
+    valores_categorias = len(categorias_vendas) * [3]
+
+
+    # renderizar no template
     context = {
         'num_produtos_estoque_baixo': num_produtos_estoque_baixo,
         'num_total_vendas': num_total_vendas,
@@ -208,12 +214,20 @@ def dashboard_view(request):
         'valor_vendas_hoje': valor_vendas_hoje,
         'ultimas_vendas': ultimas_vendas,
 
-        # graficos
+        # graficos ---------
+
+        # vendas
         'num_vendas_com_desconto': num_vendas_com_desconto,
         'num_vendas_sem_desconto': num_vendas_sem_desconto,
         'num_vendas_fiado': num_vendas_fiado,
+
+        # vendas na semana
         'dias_vendas': json.dumps(dias_vendas),
         'valores_vendas': json.dumps(valores_vendas),
+
+        # vendas por categorias
+        'categorias_vendas': json.dumps(categorias_vendas),
+        'valores_categorias': json.dumps(valores_categorias),
     }
 
     return render(request, "dashboard/dashboard.html", context)

@@ -18,20 +18,20 @@ new Chart(ctxDesconto, {
 });
 
 
-// ===== GRAFICO VENDAS =====
+// ===== GRAFICO CATEGORIAS =====
 
-const ctxVendas = document.getElementById("graficoVendas");
+const ctxVendasPorCategoria = document.getElementById("graficoCategorias");
 
-const labels = JSON.parse(ctxVendas.dataset.labels || "[]");
-const valores = JSON.parse(ctxVendas.dataset.valores || "[]");
+const labelsVendasPorCategoria = JSON.parse(ctxVendasPorCategoria.dataset.labels || "[]");
+const valoresVendasPorCategoria = JSON.parse(ctxVendasPorCategoria.dataset.valores || "[]");
 
-new Chart(ctxVendas, {
+new Chart(ctxVendasPorCategoria, {
     type: "bar",
     data: {
-        labels: labels,
+        labels: labelsVendasPorCategoria,
         datasets: [{
             label: "Valor vendido",
-            data: valores,
+            data: valoresVendasPorCategoria,
             borderWidth: 1
         }]
     },
@@ -43,3 +43,30 @@ new Chart(ctxVendas, {
         }
     }
 });
+
+// ===== GRAFICO VENDAS =====
+
+const ctxVendas = document.getElementById("graficoVendas");
+
+const labelsVendas = JSON.parse(ctxVendas.dataset.labels || "[]");
+const valoresVendas = JSON.parse(ctxVendas.dataset.valores || "[]");
+
+new Chart(ctxVendas, {
+    type: "bar",
+    data: {
+        labels: labelsVendas,
+        datasets: [{
+            label: "Valor vendido",
+            data: valoresVendas,
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+

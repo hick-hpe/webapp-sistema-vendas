@@ -54,28 +54,36 @@ Dashboard
 <!-- Graficos -->
 <div class="row mb-4 g-3">
 
-    <div class="col-md-4">
-        <div class="card shadow-sm">
+    <div class="col-12 col-lg-6">
+        <div class="card shadow-sm h-100">
             <div class="card-body">
-                <h6 class="text-muted">Descontos nas Vendas</h6>
-
-                <canvas id="graficoDesconto" data-com-desconto="{{ num_vendas_com_desconto }}"
-                    data-sem-desconto="{{ num_vendas_sem_desconto }}" data-fiado="{{ num_vendas_fiado }}">
+                <h6 class="text-muted">Vendas últimos 7 dias</h6>
+                <canvas id="graficoVendas" data-labels='{{ dias_vendas|safe }}'
+                    data-valores='{{ valores_vendas|safe }}'>
                 </canvas>
-
             </div>
         </div>
     </div>
 
-    <div class="col-md-8">
+    <div class="col-12 col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h6 class="text-muted">Vendas por Categoria</h6>
+                <canvas id="graficoCategorias" data-labels='{{ categorias_vendas|safe }}'
+                    data-valores='{{ valores_categorias|safe }}'>
+                </canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6 mx-auto">
         <div class="card shadow-sm">
             <div class="card-body">
-                <h6 class="text-muted">Vendas últimos 7 dias</h6>
-
-                <canvas id="graficoVendas" data-labels='{{ dias_vendas|safe }}'
-                    data-valores='{{ valores_vendas|safe }}'>
+                <h6 class="text-muted">Descontos nas Vendas</h6>
+                <canvas id="graficoDesconto" data-com-desconto="{{ num_vendas_com_desconto }}"
+                    data-sem-desconto="{{ num_vendas_sem_desconto }}" data-fiado="{{ num_vendas_fiado }}"
+                    style="max-height: 250px;">
                 </canvas>
-
             </div>
         </div>
     </div>
@@ -115,6 +123,5 @@ Dashboard
 
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script src="{% static 'js/graficosDashboard.js' %}"></script>
 {% endblock scripts %}
