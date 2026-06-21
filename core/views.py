@@ -52,7 +52,7 @@ def login_view(request):
 
 def cadastro_view(request):
     if request.method == "POST":
-        nome = request.POST.get("nome")
+        username = request.POST.get("username")
         email = request.POST.get("email")
         senha = request.POST.get("senha")
         confirmar_senha = request.POST.get("confirmar_senha")
@@ -67,17 +67,17 @@ def cadastro_view(request):
             messages.error(request, "Email já cadastrado.")
             return render(request, "auth/cadastro.html")
 
-        # verificar se nome de usuário já existe
-        if User.objects.filter(username=nome).exists():
-            messages.error(request, "Nome de usuário já cadastrado.")
+        # verificar se username de usuário já existe
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username de usuário já cadastrado.")
             return render(request, "auth/cadastro.html")
         
         # criar usuário
         user = User.objects.create_user(
-            username=nome,
+            username=username,
             email=email,
             password=senha,
-            first_name=nome
+            first_name=username
         )
 
         login(request, user)
