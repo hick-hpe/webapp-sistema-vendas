@@ -68,6 +68,7 @@ Produtos
                     <th>Produto</th>
                     <th>Categoria</th>
                     <th>Venda</th>
+                    <th>Status</th>
                     <th class="text-end">Ações</th>
                 </tr>
             </thead>
@@ -78,6 +79,15 @@ Produtos
 
                     <td>{{ produto.categoria.nome }}</td>
                     <td>R$ {{ produto.preco_venda }}</td>
+                    <td>
+                        {% if produto.estoque.status == "Esgotado" %}
+                            <span class="badge bg-danger text-white">Esgotado</span>
+                        {% elif produto.estoque.status == "Baixo" %}
+                            <span class="badge bg-warning text-dark">Estoque Baixo</span>
+                        {% else %}
+                            <span class="badge bg-success text-white">Normal</span>
+                        {% endif %}
+                    </td>
 
                     <td class="text-end d-flex justify-content-end gap-1">
 
