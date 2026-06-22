@@ -1,6 +1,6 @@
 from django.db import models
+from django.db.models.functions import Lower
 from django.contrib.auth.models import User
-
 
 class Categoria(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -31,6 +31,12 @@ class Fornecedor(models.Model):
     def __str__(self):
         return self.nome
     
+# personalizar ordenacao
+# padrao difere "a" de "A"
+# aplicar Lower
+class ProdutoManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().order_by(Lower("nome"))
 
 class Produto(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -48,8 +54,8 @@ class Produto(models.Model):
     preco_custo = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     estoque_minimo = models.PositiveIntegerField(default=5, blank=True)
 
-    class Meta:
-        ordering = ['nome']
+    # usar o manager
+    objects = ProdutoManager()
 
     @property
     def lucro(self):

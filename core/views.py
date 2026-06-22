@@ -11,7 +11,7 @@ from django.contrib import messages
 import json
 from django.http import JsonResponse
 from django.db.models import F, Q, Sum
-from datetime import datetime, time, timedelta, timedelta
+from datetime import datetime, timedelta, timedelta
 from django.utils.dateparse import parse_date
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import A4
