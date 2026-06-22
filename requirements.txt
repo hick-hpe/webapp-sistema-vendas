@@ -4,3 +4,4 @@ whitenoise
 reportlab
 psycopg2-binary
 python-dotenv
+openpyxl
