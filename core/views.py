@@ -483,6 +483,15 @@ def realizar_venda_view(request):
 
             desconto = 0 if desconto < 0 else desconto
             taxa = 0 if taxa < 0 else taxa
+            
+            print('--- Processando venda ---')
+            print(f'itens: {itens}')
+            print(f'fiado: {fiado}')
+            print(f'cliente: {cliente}')
+            print(f'descricao: {descricao}')
+            print(f'forma_pagamento: {forma_pagamento}')
+            print(f'desconto: {desconto}')
+            print(f'taxa: {taxa}')
 
             if not itens:
                 print("Nenhum item enviado.")
@@ -530,7 +539,9 @@ def realizar_venda_view(request):
                     (produto, quantidade, preco)
                 )
 
-                total_calculado = total_calculado - desconto + taxa
+                print(f'{produto.nome} - {quantidade}x - R$ {(quantidade * preco):.2f}')
+
+            total_calculado = total_calculado - desconto + taxa
 
             # cria a venda
             venda_obj = Venda.objects.create(

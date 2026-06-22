@@ -163,7 +163,7 @@ class ItemVenda(models.Model):
     total_parcial = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f'{self.quantidade}x {self.produto.nome}'
+        return f'{self.quantidade}x {self.produto.nome} - R$ {(self.total_parcial):.2f}'
     
 
 class VendaFiada(models.Model):
