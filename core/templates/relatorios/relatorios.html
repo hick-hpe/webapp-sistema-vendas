@@ -13,8 +13,9 @@ Relatórios
 
         <h4 class="mb-4">Gerar Relatório de Vendas</h4>
 
-        <form method="get" action="{% url 'gerar_relatorio' %}">
+        <form method="post" action="{% url 'gerar_relatorio' %}">
 
+            {% csrf_token %}
             <!-- ================= Filtro rápido ================= -->
             <div class="mb-4">
                 <h6 class="fw-bold">Filtro rápido</h6>
@@ -47,9 +48,14 @@ Relatórios
 
             <!-- ================= Botões ================= -->
             <div class="d-flex gap-2 mt-4">
-                <button type="submit" class="btn btn-dark">
+                <button type="submit" name="exportar" value="pdf" class="btn btn-dark">
                     <i class="bi bi-file-pdf"></i>
                     Gerar PDF
+                </button>
+
+                <button type="submit" name="exportar" value="excel" class="btn btn-dark">
+                    <i class="bi bi-file-earmark-excel"></i>
+                    Gerar Excel
                 </button>
 
                 <a href="{% url 'relatorios' %}" class="btn btn-outline-secondary">

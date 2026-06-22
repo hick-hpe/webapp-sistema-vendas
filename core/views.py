@@ -19,6 +19,9 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 from django.views.decorators.http import require_http_methods
+from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+from openpyxl.utils import get_column_letter
 
 # #######################################################################
 #                            PAGINAS DE ERROS
@@ -770,7 +773,17 @@ def gerar_relatorio_view(request):
 
         print(f"Gerando relatório para este mês: {primeiro_dia} a {ultimo_dia}. Vendas encontradas: {vendas.count()}")
 
-    return gerar_pdf(request, vendas)
+
+    # --------------------- exportar dados ---------------------
+    print('POST:', request.POST)
+    tipo_exportacao = request.POST.get('exportar')
+    print("tipo_exportacao:",tipo_exportacao)
+        
+    if tipo_exportacao == 'excel':
+        return gerar_excel(request, vendas)
+    
+    elif tipo_exportacao == 'pdf':
+        return gerar_pdf(request, vendas)
 
 
 @login_required(login_url='/')
@@ -1144,5 +1157,184 @@ def gerar_pdf(request, vendas):
 
     doc.build(elementos)
 
+    return response
+
+
+def gerar_excel(request, vendas):
+    # 1. Configuração da resposta HTTP para Excel
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    nome = f"relatorio_{request.user.username}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+    tipo_exibicao = "attachment"
+    response['Content-Disposition'] = f'{tipo_exibicao}; filename="{nome}"'
+
+    # 2. Criação do Workbook e da planilha ativa
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Relatório de Vendas"
+    ws.views.sheetView[0].showGridLines = True  # Garante que as linhas de grade apareçam
+
+    # 3. Definição de Estilos (Fontes, Cores e Bordas)
+    font_titulo = Font(name='Arial', size=16, bold=True)
+    font_secao = Font(name='Arial', size=12, bold=True)
+    font_header = Font(name='Arial', size=11, bold=True)
+    font_body = Font(name='Arial', size=11)
+    font_total = Font(name='Arial', size=11, bold=True)
+    font_alerta = Font(name='Arial', size=11, color="9C0006") # Texto vermelho escuro
+
+    fill_header = PatternFill(start_color="D3D3D3", end_color="D3D3D3", fill_type="solid") # Cinza claro
+    fill_total = PatternFill(start_color="F5F5F5", end_color="F5F5F5", fill_type="solid")  # Whitesmoke
+    fill_baixo_estoque = PatternFill(start_color="FFCCCC", end_color="FFCCCC", fill_type="solid") # Vermelho claro
+
+    border_thin = Border(
+        left=Side(style='thin', color='808080'),
+        right=Side(style='thin', color='808080'),
+        top=Side(style='thin', color='808080'),
+        bottom=Side(style='thin', color='808080')
+    )
+
+    # ###################################################################
+    # SEÇÃO 1: RELATÓRIO DE VENDAS
+    # ###################################################################
+    ws.append(["RELATÓRIO DE VENDAS"])
+    ws.cell(row=ws.max_row, column=1).font = font_titulo
+    ws.append([])  # Linha em branco
+
+    ws.append(["Dados de vendas:"])
+    ws.cell(row=ws.max_row, column=1).font = font_secao
+    ws.append([])  # Linha em branco
+
+    # Cabeçalho Tabela Vendas
+    headers_vendas = ["Data", "Cliente", "Descrição", "Total"]
+    ws.append(headers_vendas)
+    for col_num in range(1, 5):
+        cell = ws.cell(row=ws.max_row, column=col_num)
+        cell.font = font_header
+        cell.fill = fill_header
+        cell.border = border_thin
+
+    total_geral = Decimal("0.00")
+    for venda in vendas:
+        data_str = venda.data_venda.strftime('%d/%m/%Y')
+        cliente_str = venda.cliente if venda.cliente else "-"
+        # No Excel removemos as tags HTML <b> pois o openpyxl não as renderiza no append
+        descricao_str = venda.descricao if venda.descricao else "-"
+        
+        ws.append([data_str, cliente_str, descricao_str, float(venda.total)])
+        total_geral += venda.total
+
+        # Estilização das linhas de dados das vendas
+        current_row = ws.max_row
+        for col_num in range(1, 5):
+            cell = ws.cell(row=current_row, column=col_num)
+            cell.font = font_body
+            cell.border = border_thin
+            if col_num == 4:
+                cell.number_format = 'R$ #,##0.00' # Formatação de moeda nativa do Excel
+
+    # Linha do Total Geral
+    ws.append(["", "", "TOTAL GERAL", float(total_geral)])
+    current_row = ws.max_row
+    for col_num in range(1, 5):
+        cell = ws.cell(row=current_row, column=col_num)
+        cell.font = font_total
+        cell.fill = fill_total
+        cell.border = border_thin
+        if col_num == 4:
+            cell.number_format = 'R$ #,##0.00'
+
+    ws.append([])  # Linha em branco
+    ws.append([])  # Linha em branco
+
+    # ###################################################################
+    # SEÇÃO 2: DESCONTOS NAS VENDAS
+    # ###################################################################
+    ws.append(["Descontos nas vendas:"])
+    ws.cell(row=ws.max_row, column=1).font = font_secao
+    ws.append([])  # Linha em branco
+
+    headers_descontos = ["Com desconto", "Sem desconto", "Total de vendas", "Total R$"]
+    ws.append(headers_descontos)
+    for col_num in range(1, 5):
+        cell = ws.cell(row=ws.max_row, column=col_num)
+        cell.font = font_header
+        cell.fill = fill_header
+        cell.border = border_thin
+
+    # Consultas do banco de dados idênticas às originais
+    vendas_query = Venda.objects.filter(user=request.user)
+    total_vendas = vendas_query.count()
+    total_vendas_desconto = vendas_query.filter(desconto__gt=0).count()
+    soma_desconto = vendas_query.filter(desconto__gt=0).aggregate(total=Sum('desconto'))['total'] or 0
+
+    ws.append([
+        total_vendas_desconto,
+        (total_vendas - total_vendas_desconto),
+        total_vendas,
+        float(soma_desconto)
+    ])
+    
+    current_row = ws.max_row
+    for col_num in range(1, 5):
+        cell = ws.cell(row=current_row, column=col_num)
+        cell.font = font_body
+        cell.border = border_thin
+        if col_num == 4:
+            cell.number_format = 'R$ #,##0.00'
+
+    ws.append([])  # Linha em branco
+    ws.append([])  # Linha em branco
+
+    # ###################################################################
+    # SEÇÃO 3: DADOS DE ESTOQUE GERAL
+    # ###################################################################
+    ws.append(["Dados de estoque geral:"])
+    ws.cell(row=ws.max_row, column=1).font = font_secao
+    ws.append([])  # Linha em branco
+
+    headers_estoque = ["Produto", "Quantidade", "Status"]
+    ws.append(headers_estoque)
+    for col_num in range(1, 4):
+        cell = ws.cell(row=ws.max_row, column=col_num)
+        cell.font = font_header
+        cell.fill = fill_header
+        cell.border = border_thin
+
+    produtos_estoque = Produto.objects.filter(user=request.user).select_related('estoque')
+
+    for produto in produtos_estoque:
+        qtd = produto.estoque.quantidade if produto.estoque else 0
+        status = "Baixo" if qtd < 5 else "OK"
+        
+        ws.append([produto.nome, qtd, status])
+        current_row = ws.max_row
+        
+        # Aplica a cor de fundo vermelha caso o estoque esteja baixo
+        for col_num in range(1, 4):
+            cell = ws.cell(row=current_row, column=col_num)
+            cell.font = font_body
+            cell.border = border_thin
+            if status == "Baixo":
+                cell.fill = fill_baixo_estoque
+                if col_num == 3:
+                    cell.font = font_alerta
+
+    # ###################################################################
+    # AUTO AJUSTE DE LARGURA DAS COLUNAS
+    # ###################################################################
+    for col in ws.columns:
+        max_len = 0
+        col_letter = get_column_letter(col[0].column)
+        for cell in col:
+            # Ignora o título principal na contagem para não alargar excessivamente a coluna A
+            if cell.row == 1:
+                continue
+            if cell.value:
+                max_len = max(max_len, len(str(cell.value)))
+        ws.column_dimensions[col_letter].width = max(max_len + 4, 12)
+
+    # 4. Salva o arquivo diretamente na resposta HTTP
+    wb.save(response)
     return response
 
